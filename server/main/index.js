@@ -38,30 +38,24 @@ exports.register = (server, options, next) => {
 
   const yo = function (request, reply) {
     server.methods.hapiKeywords((err, res) => {
-      reply({ err: err, res: res, cache: server.methods.hapiKeywords.cache })
+      // reply({ err: err, res: res, cache: server.methods.hapiKeywords.cache })
+      reply(res)
     })
   }
 
-  server.method('hapiKeywords', (next) => {
-    server.inject({
+  server.method('hapiKeywords',
+    () => server.inject({
       url: '/hapiKeywords',
       allowInternals: true,
       validate: false
-    })
-      .then((res) => {
-        next(null, res.result)
-      })
-      .catch((e) => {
-        console.log('EE:', e)
-        next(e)
-      })
-  },
-  {
-    cache: {
-      generateTimeout: 5000,
-      expiresIn: 300000
+    }).then((res) => res.result),
+    {
+      callback: false,
+      cache: {
+        generateTimeout: 5000,
+        expiresIn: 300000
+      }
     }
-  }
   )
 
   server.route({
