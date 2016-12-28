@@ -21,6 +21,10 @@ const config = {
     admin: process.env.DBADMIN,
     password: process.env.DBPASSWORD
   },
+  remotedb: {
+    url: process.env.REMOTEDBURL || 'https://skimdb.npmjs.com',
+    name: process.env.REMOTEDBNAME || 'registry'
+  },
   cookie: {
     password: 'password-should-be-32-characters',
     secure: defFalse

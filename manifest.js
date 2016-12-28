@@ -58,6 +58,10 @@ const manifest = {
             url: Config.get('/db/url'),
             name: Config.get('/db/name')
           },
+          remotedb: {
+            url: Config.get('/remotedb/url'),
+            name: Config.get('/remotedb/name')
+          },
           teaser: {
             length: Config.get('/teaser/length')
           }

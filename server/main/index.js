@@ -6,14 +6,14 @@ const qs = require('querystring')
 
 // npm
 const Wreck = require('wreck')
-const nano = require('cloudant-nano')
-const pify = require('pify')
-const truncate = require('html-truncate')
-const sharp = require('sharp')
-const marked = require('marked')
-const got = require('got')
+// const nano = require('cloudant-nano')
+// const pify = require('pify')
+// const truncate = require('html-truncate')
+// const sharp = require('sharp')
+// const marked = require('marked')
+// const got = require('got')
 
-const reserved = ['a-propos', 'vie-privee', 'edit', 'punch', 'contact', 'admin', 'new', 'user', 'css', 'js', 'img']
+// const reserved = ['a-propos', 'vie-privee', 'edit', 'punch', 'contact', 'admin', 'new', 'user', 'css', 'js', 'img']
 
 const makeOpts = (request, docs, noEnd) => {
   const name = request.auth.credentials && request.auth.credentials.name || ''
@@ -31,6 +31,9 @@ const jsonOpts = (opts) => {
 
 exports.register = (server, options, next) => {
   const dbUrl = url.resolve(options.db.url, options.db.name)
+  const remotedbUrl = url.resolve(options.remotedb.url, options.remotedb.name)
+
+/*
 
   const menu = function (request, reply) {
     const db = nano({ url: dbUrl })
@@ -61,11 +64,16 @@ exports.register = (server, options, next) => {
       .catch(reply)
   }
 
+*/
+
+/*
   const mapperContact = (request, callback) => {
     if (request.auth.credentials) { return callback(new Error('ouch')) }
     callback(null, dbUrl + '/_design/app/_update/comment', { accept: 'application/json' })
   }
+*/
 
+/*
   const responderContact = (err, res, request, reply) => {
     if (err) { return reply(err) } // FIXME: how to test?
     const go = (err, payload) => {
@@ -74,12 +82,16 @@ exports.register = (server, options, next) => {
     }
     Wreck.read(res, { json: true }, go)
   }
+*/
 
+/*
   const contact = function (request, reply) {
     if (request.auth.credentials) { return reply.view('eliza', { menu: request.pre.menu }) }
     reply.view('contact', { menu: request.pre.menu })
   }
+*/
 
+/*
   const mapperPunches = (request, callback) => {
     const it = [dbUrl]
     let dest
@@ -87,7 +99,9 @@ exports.register = (server, options, next) => {
     dest = it.join('/')
     callback(null, dest, { accept: 'application/json' })
   }
+*/
 
+/*
   const responderPunches = (err, res, request, reply) => {
     if (err) { return reply(err) } // FIXME: how to test?
     if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
@@ -103,6 +117,7 @@ exports.register = (server, options, next) => {
       reply(punches).etag(payload._rev)
     })
   }
+*/
 
   const mapper = (request, callback) => {
     const it = [dbUrl]
@@ -135,7 +150,7 @@ exports.register = (server, options, next) => {
           tpl = 'edit-doc'
         } else {
           tpl = 'doc'
-          payload.content = marked(payload.content)
+          // payload.content = marked(payload.content)
           if (payload.punches && payload.punches.length) {
             payload.punchInfo = payload.punches
               .reverse()
@@ -155,9 +170,11 @@ exports.register = (server, options, next) => {
         obj = {
           menu: request.pre.menu,
           docs: payload.rows.map((d) => {
+            /*
             if (d.doc.content) {
               d.doc.content = marked(truncate(d.doc.content, options.teaser.length, { keepImageTag: true }))
             }
+            */
             d.doc._id = d.doc._id.split(':')[1]
             if (!d.doc._attachments) { d.doc._attachments = [] }
             return d.doc
@@ -186,6 +203,7 @@ exports.register = (server, options, next) => {
     Wreck.read(res, { json: true }, go)
   }
 
+/*
   const getDoc = function (request, reply) {
     const db = nano({ url: dbUrl })
     if (request.auth.credentials && request.auth.credentials.cookie) { db.cookie = request.auth.credentials.cookie }
@@ -199,9 +217,11 @@ exports.register = (server, options, next) => {
       })
       .catch(reply)
   }
+*/
 
-  const resize = (image, width, height) => sharp(image).resize(width, height).max().toBuffer()
+  // const resize = (image, width, height) => sharp(image).resize(width, height).max().toBuffer()
 
+/*
   const punchIt = function (request, reply) {
     const doc = request.pre.m1
     if (!doc.punches) { doc.punches = [] }
@@ -218,6 +238,7 @@ exports.register = (server, options, next) => {
       })
       .catch(reply)
   }
+*/
 
   const newDoc = function (request, reply) {
     reply.view('new-doc', { doc: { _attachments: [] }, menu: request.pre.menu })
@@ -227,6 +248,7 @@ exports.register = (server, options, next) => {
     reply.view('vie-privee', { menu: request.pre.menu })
   }
 
+/*
   const ajaxUndo = function (request, reply) {
     request.pre.m1.punches.pop()
     got.put(dbUrl + '/' + request.pre.m1._id, { body: JSON.stringify(request.pre.m1), json: true })
@@ -238,17 +260,22 @@ exports.register = (server, options, next) => {
         reply.redirect('/ajax/' + request.params.pathy)
       })
   }
+*/
 
+/*
   const ajax = function (request, reply) {
     const doc = request.pre.m1
     doc._id = doc._id.split(':')[1]
     if (!doc._attachments) { doc._attachments = [] }
     reply.view('ajax', { doc: doc })
   }
+*/
 
   const aPropos = function (request, reply) {
     reply.view('a-propos', { menu: request.pre.menu })
   }
+
+/*
 
   const editDoc = function (request, reply) {
     if (reserved.indexOf(request.payload.id) !== -1) { return reply.forbidden('The provided field "id" is unacceptable.', { reserved: reserved }) }
@@ -313,15 +340,20 @@ exports.register = (server, options, next) => {
       .catch((err) => reply.boom(err.statusCode, err))
   }
 
+*/
+
+/*
   server.route({
     method: 'GET',
     path: '/contact',
     config: {
-      pre: [{ assign: 'menu', method: menu }],
+      // pre: [{ assign: 'menu', method: menu }],
       handler: contact
     }
   })
+*/
 
+/*
   server.route({
     method: 'POST',
     path: '/contact',
@@ -333,17 +365,19 @@ exports.register = (server, options, next) => {
       }
     }
   })
+*/
 
   server.route({
     method: 'GET',
     path: '/punch/new',
     config: {
       auth: { mode: 'required' },
-      pre: [{ assign: 'menu', method: menu }],
+      // pre: [{ assign: 'menu', method: menu }],
       handler: newDoc
     }
   })
 
+/*
   server.route({
     method: 'POST',
     path: '/punch/new',
@@ -352,12 +386,13 @@ exports.register = (server, options, next) => {
       handler: editDoc
     }
   })
+*/
 
   server.route({
     method: 'GET',
     path: '/',
     config: {
-      pre: [{ assign: 'menu', method: menu }],
+      // pre: [{ assign: 'menu', method: menu }],
       handler: {
         proxy: {
           passThrough: true,
@@ -368,6 +403,7 @@ exports.register = (server, options, next) => {
     }
   })
 
+/*
   server.route({
     method: 'POST',
     path: '/',
@@ -377,12 +413,13 @@ exports.register = (server, options, next) => {
       handler: punchIt
     }
   })
+*/
 
   server.route({
     method: 'GET',
     path: '/admin',
     config: {
-      pre: [{ assign: 'menu', method: menu }],
+      // pre: [{ assign: 'menu', method: menu }],
       auth: { mode: 'required' },
       handler: {
         proxy: {
@@ -398,7 +435,7 @@ exports.register = (server, options, next) => {
     method: 'GET',
     path: '/punch/{pathy}',
     config: {
-      pre: [{ assign: 'menu', method: menu }],
+      // pre: [{ assign: 'menu', method: menu }],
       auth: { mode: 'required' },
       handler: {
         proxy: {
@@ -428,7 +465,7 @@ exports.register = (server, options, next) => {
     method: 'GET',
     path: '/punch/{pathy}/edit',
     config: {
-      pre: [{ assign: 'menu', method: menu }],
+      // pre: [{ assign: 'menu', method: menu }],
       auth: { mode: 'required' },
       handler: {
         proxy: {
@@ -440,6 +477,7 @@ exports.register = (server, options, next) => {
     }
   })
 
+/*
   server.route({
     method: 'GET',
     path: '/punch/{pathy}/punches.json',
@@ -454,7 +492,9 @@ exports.register = (server, options, next) => {
       }
     }
   })
+*/
 
+/*
   server.route({
     method: 'POST',
     path: '/punch/{pathy}/edit',
@@ -464,16 +504,18 @@ exports.register = (server, options, next) => {
       handler: editDoc
     }
   })
+*/
 
   server.route({
     method: 'GET',
     path: '/vie-privee',
     config: {
-      pre: [{ assign: 'menu', method: menu }],
+      // pre: [{ assign: 'menu', method: menu }],
       handler: viePrivee
     }
   })
 
+/*
   server.route({
     method: 'POST',
     path: '/undo/{pathy}',
@@ -483,7 +525,9 @@ exports.register = (server, options, next) => {
       handler: ajaxUndo
     }
   })
+*/
 
+/*
   server.route({
     method: 'GET',
     path: '/ajax/{pathy}',
@@ -493,12 +537,13 @@ exports.register = (server, options, next) => {
       handler: ajax
     }
   })
+*/
 
   server.route({
     method: 'GET',
     path: '/a-propos',
     config: {
-      pre: [{ assign: 'menu', method: menu }],
+      // pre: [{ assign: 'menu', method: menu }],
       handler: aPropos
     }
   })
