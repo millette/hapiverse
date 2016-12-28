@@ -5,6 +5,8 @@ require('dotenv-safe').load()
 const Confidence = require('confidence')
 const criteria = { env: process.env.NODE_ENV }
 
+const pkg = require('./package.json')
+
 const defFalse = {
   $filter: 'env',
   prod: true,
@@ -12,8 +14,8 @@ const defFalse = {
 }
 
 const config = {
-  $meta: 'This file configures GlassJaw.',
-  projectName: 'glassjaw-v2',
+  $meta: 'This file configures Hapiverse.',
+  projectName: pkg.name,
   app: { siteTitle: process.env.SITETITLE },
   db: {
     url: process.env.DBURL,
