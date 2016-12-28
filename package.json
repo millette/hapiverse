@@ -1,0 +1,51 @@
+{
+  "name": "hapiverse",
+  "version": "0.0.0",
+  "description": "Modules from the HapiJS Universe.",
+  "license": "AGPL-3.0",
+  "repository": "millette/hapiverse",
+  "author": {
+    "name": "Robin Millette",
+    "email": "robin@millette.info",
+    "url": "http://robin.millette.info"
+  },
+  "bin": "cli.js",
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "lint": "standard",
+    "test": "standard && nyc ava",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "files": [
+    "index.js",
+    "cli.js"
+  ],
+  "keywords": [
+    "cli-app",
+    "cli"
+  ],
+  "dependencies": {
+    "confidence": "^3.0.2",
+    "dotenv-safe": "^3.0.0",
+    "glue": "^4.1.0",
+    "got": "^6.6.3",
+    "h2o2": "^5.4.0",
+    "hapi": "^16.0.2",
+    "lodash-vision": "^0.1.0",
+    "meow": "^3.7.0",
+    "update-notifier": "^1.0.3",
+    "vision": "^4.1.1"
+  },
+  "devDependencies": {
+    "ava": "^0.17.0",
+    "babel-eslint": "^7.1.1",
+    "coveralls": "^2.11.15",
+    "nyc": "^10.0.0",
+    "standard": "^8.6.0"
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  }
+}
