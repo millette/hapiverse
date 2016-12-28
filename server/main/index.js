@@ -23,24 +23,19 @@ exports.register = (server, options, next) => {
   const responder = (err, res, request, reply) => {
     if (err) { return reply(err) } // FIXME: how to test?
     if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
-
     const go = (err, payload) => {
       if (err) { return reply(err) } // FIXME: how to test?
       console.log('PATH:', request.path)
       console.log('PL-LEN:', payload.rows.length)
       reply(payload.rows.map((row) => {
+        row.keyword = row.key[0]
+        row.description = row.key[2]
+        delete row.key
         delete row.value
         return row
       }))
     }
     Wreck.read(res, { json: true }, go)
-  }
-
-  const yo = function (request, reply) {
-    server.methods.hapiKeywords((err, res) => {
-      // reply({ err: err, res: res, cache: server.methods.hapiKeywords.cache })
-      reply(res)
-    })
   }
 
   server.method('hapiKeywords',
@@ -53,22 +48,10 @@ exports.register = (server, options, next) => {
       callback: false,
       cache: {
         generateTimeout: 5000,
-        expiresIn: 300000
+        expiresIn: 900000 // 15 min.
       }
     }
   )
-
-  server.route({
-    method: 'GET',
-    path: '/',
-    handler: { view: 'hello' }
-  })
-
-  server.route({
-    method: 'GET',
-    path: '/yo',
-    handler: yo
-  })
 
   server.route({
     method: 'GET',
@@ -81,6 +64,23 @@ exports.register = (server, options, next) => {
           onResponse: responder
         }
       }
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/',
+    handler: { view: 'hello' }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/yo',
+    handler: function (request, reply) {
+      server.methods.hapiKeywords((err, res) => {
+        if (err) { return reply(err) }
+        reply.view('yeah', { modules: res.slice(0, 48) })
+      })
     }
   })
 

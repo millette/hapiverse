@@ -1,5 +1,12 @@
 <%= partials.head(data) %>
-<div class="front row small-up-2 medium-up-3 large-up-5">
-<pre><%- JSON.stringify(data, null, '  ') %></pre>
+<div class="small-up-2 medium-up-3 large-up-4" data-equalizer data-equalize-by-row="true">
+<% data.modules.forEach((module) => { %>
+  <div class="column">
+    <div class="callout" data-equalizer-watch>
+      <h4><%- module.id %></h4>
+      <p><%- module.description %> <span class="label"><%- module.keyword %></span></p>
+    </div>
+  </div>
+<% }) %>
 </div>
 <%= partials.foot(data) %>
