@@ -132,9 +132,11 @@ exports.register = (server, options, next) => {
     callback(null, dest, { accept: 'application/json' })
   }
 
+/*
   const mapperImg = (request, callback) => {
     callback(null, [dbUrl, request.auth.credentials.name + ':' + request.params.pathy, request.params.img].join('/'))
   }
+*/
 
   const responder = (err, res, request, reply) => {
     if (err) { return reply(err) } // FIXME: how to test?
@@ -240,13 +242,17 @@ exports.register = (server, options, next) => {
   }
 */
 
+/*
   const newDoc = function (request, reply) {
     reply.view('new-doc', { doc: { _attachments: [] }, menu: request.pre.menu })
   }
+*/
 
+/*
   const viePrivee = function (request, reply) {
     reply.view('vie-privee', { menu: request.pre.menu })
   }
+*/
 
 /*
   const ajaxUndo = function (request, reply) {
@@ -271,9 +277,11 @@ exports.register = (server, options, next) => {
   }
 */
 
+/*
   const aPropos = function (request, reply) {
     reply.view('a-propos', { menu: request.pre.menu })
   }
+*/
 
 /*
 
@@ -367,6 +375,7 @@ exports.register = (server, options, next) => {
   })
 */
 
+/*
   server.route({
     method: 'GET',
     path: '/punch/new',
@@ -376,6 +385,7 @@ exports.register = (server, options, next) => {
       handler: newDoc
     }
   })
+*/
 
 /*
   server.route({
@@ -415,6 +425,7 @@ exports.register = (server, options, next) => {
   })
 */
 
+/*
   server.route({
     method: 'GET',
     path: '/admin',
@@ -430,7 +441,9 @@ exports.register = (server, options, next) => {
       }
     }
   })
+*/
 
+/*
   server.route({
     method: 'GET',
     path: '/punch/{pathy}',
@@ -446,7 +459,9 @@ exports.register = (server, options, next) => {
       }
     }
   })
+*/
 
+/*
   server.route({
     method: 'GET',
     path: `/punch/{pathy}/{img}`,
@@ -460,7 +475,9 @@ exports.register = (server, options, next) => {
       }
     }
   })
+*/
 
+/*
   server.route({
     method: 'GET',
     path: '/punch/{pathy}/edit',
@@ -476,6 +493,7 @@ exports.register = (server, options, next) => {
       }
     }
   })
+*/
 
 /*
   server.route({
@@ -506,6 +524,7 @@ exports.register = (server, options, next) => {
   })
 */
 
+/*
   server.route({
     method: 'GET',
     path: '/vie-privee',
@@ -514,6 +533,7 @@ exports.register = (server, options, next) => {
       handler: viePrivee
     }
   })
+*/
 
 /*
   server.route({
@@ -539,6 +559,7 @@ exports.register = (server, options, next) => {
   })
 */
 
+/*
   server.route({
     method: 'GET',
     path: '/a-propos',
@@ -547,6 +568,7 @@ exports.register = (server, options, next) => {
       handler: aPropos
     }
   })
+*/
 
   console.log(`CouchDB: ${dbUrl}`)
   next()
