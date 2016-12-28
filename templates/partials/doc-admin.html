@@ -1,0 +1,10 @@
+<h3>Doc #<%- data.i + 1 %>: <a href="/punch/<%- data.doc._id %>"><%- data.doc.title || data.doc._id %></a></h3>
+<% if (data.credentials || data.edit) { %>
+<p><a class="button hollow" href="/punch/<%- data.doc._id %>/edit">edit</a></p>
+<% } %>
+<%= data.doc.content %>
+<% if (data.doc._attachments['top-image-2.jpeg']) { %>
+  <img src="/punch/<%- data.doc._id %>/top-image-2.jpeg">
+<% } else if (data.doc._attachments['top-image-2.png']) { %>
+  <img src="/punch/<%- data.doc._id %>/top-image-2.png">
+<% } %>

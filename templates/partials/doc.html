@@ -1,0 +1,24 @@
+<div class="row column">
+  <div data-src="<%- data.doc._id %>" id="vis"></div>
+</div>
+<div class="row">
+  <div class="column small-8">
+    <% if (data.credentials || data.edit) { %>
+    <p><a class="button hollow" href="/punch/<%- data.doc._id %>/edit">edit</a></p>
+    <% } %>
+    <h3>Activité</h3>
+    <ol>
+      <% data.doc.punchInfo.forEach((punch) => { %>
+      <li><%- punch.timestr %> <%- punch.comment || '' %></li>
+      <% }) %>
+    </ol>
+  </div>
+  <div class="column small-4">
+    <% if (data.doc._attachments['top-image-4.jpeg']) { %>
+      <img src="/punch/<%- data.doc._id %>/top-image-4.jpeg">
+    <% } else if (data.doc._attachments['top-image-4.png']) { %>
+      <img src="/punch/<%- data.doc._id %>/top-image-4.png">
+    <% } %>
+    <%= data.doc.content %>
+  </div>
+</div>

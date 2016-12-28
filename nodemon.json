@@ -1,0 +1,5 @@
+{
+  "ignore": ["app", "templates/*.html"],
+  "ext": "js,json,html",
+  "delay": 1500
+}

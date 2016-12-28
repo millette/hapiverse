@@ -1,0 +1,42 @@
+<% if (data.doc) { %>
+<p class="lead"><strong>ATTENTION</strong>: Éditer un document avec cette interface
+va oblitérer tous les autres champs du document si vous l'avez créé directement
+dans Futon (interface CouchDB).
+</p>
+<% } %>
+<form method="POST" enctype="multipart/form-data">
+  <label>
+  <% if (data.doc && data.doc._id) { %>
+  <input type="text" name="id" placeholder="id" readonly value="<%- data.doc && data.doc._id %>">
+  <% } else { %>
+  <input type="text" name="id" placeholder="id" required">
+  <% } %>
+  </label>
+  <label>
+  <input type="text" name="title" placeholder="titre" required value="<%- data.doc && data.doc.title || '' %>">
+  </label>
+  <textarea rows="9" name="content" placeholder="contenu"><%- data.doc && data.doc.content || '' %></textarea>
+  <% if (data.doc && data.doc._rev) { %>
+  <input type="hidden" name="rev" value="<%- data.doc && data.doc._rev %>">
+  <% } %>
+  <label>Punch commenté? <input type="checkbox" name="punch_comment"<%- (data.doc && data.doc.punch_comment) ? ' checked' : '' %>></label>
+  <label>Retarder punch de 15 minutes? <input type="checkbox" name="punch_delayed"<%- (data.doc && data.doc.punch_delayed) ? ' checked' : '' %>></label>
+  <label>
+  <input type="text" name="menu_title" placeholder="Titre du menu" value="<%- data.doc && data.doc.menu_title || '' %>">
+  </label>
+
+  <label>
+  <input type="number" step="any" name="weight" placeholder="5" value="<%- data.doc && data.doc.weight || '' %>">
+  </label>
+  <label class="file">
+<% if (data.doc._attachments['top-image-2.jpeg']) { %>
+  <img title="Remplacer l'image (jpeg ou png)" src="/punch/<%- data.doc._id %>/top-image-2.jpeg">
+<% } else if (data.doc._attachments['top-image-2.png']) { %>
+  <img title="Remplacer l'image (jpeg ou png)" src="/punch/<%- data.doc._id %>/top-image-2.png">
+<% } else { %>
+  Téléverser une image jpeg ou png
+<% } %>
+  <input type="file" name="jpeg">
+  </label>
+  <input class="button secondary" type="submit" value="<%- (data.doc && data.doc._rev) ? 'Éditer' : 'Créer' %>">
+</form>

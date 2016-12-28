@@ -22,14 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 'use strict'
 
-// const got = require('got')
+// self
+const Manifest = require('./manifest')
 
-module.exports = function (str, opts) {
-  if (typeof str !== 'string') {
-    throw new TypeError('Expected a string')
-  }
+// npm
+const Glue = require('glue')
 
-  opts = opts || {}
+const composeOptions = { relativeTo: __dirname }
 
-  return str + ' & ' + (opts.postfix || 'rainbows')
-}
+module.exports = Glue.compose.bind(Glue, Manifest.get('/'), composeOptions)

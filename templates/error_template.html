@@ -1,0 +1,14 @@
+<%= partials.head(data) %>
+<div class="row">
+  <div class="column small-10 medium-8 small-centered">
+    <div class="callout alert text-center">
+      <h2><%- data.errorTitle %></h2>
+      <p><%- data.errorMessage %> -- <%- data.statusCode %></p>
+      <% if (data.statusCode === 401) { %>
+        <p>Connectez-vous via la page <a href="/?next=<%- data.url %>">d'accueil</a> au besoin.</p>
+      <% } %>
+      <p>Allez à la page <a href="/">d'accueil</a>.</p>
+    </div>
+  </div>
+</div>
+<%= partials.foot(data) %>

@@ -1,0 +1,15 @@
+<% if (data.credentials) { %>
+  <form method="post" action="/user/logout">
+    <input type="hidden" name="next" value="/">
+    <input class="button warning" type="submit" value="Logout <%- data.credentials.fullname || data.credentials.name %>">
+  </form>
+<% } else { %>
+<div class="callout primary">
+  <form method="post" action="/user/login">
+    <input type="text" name="name" placeholder="name" required>
+    <input type="password" name="password" placeholder="password" required>
+    <input type="hidden" name="next" value="/<%- data[data.next ? 'next' : 'pathparts'].join('/') %>">
+    <input class="button secondary" type="submit" value="Login">
+  </form>
+</div>
+<% } %>

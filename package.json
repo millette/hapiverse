@@ -14,6 +14,8 @@
     "node": ">=4"
   },
   "scripts": {
+    "start": "NODE_ENV=prod && node server.js",
+    "dev": "nodemon server.js",
     "lint": "standard",
     "test": "standard && nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
@@ -27,14 +29,26 @@
     "cli"
   ],
   "dependencies": {
+    "catbox-redis": "^2.0.2",
     "confidence": "^3.0.2",
+    "couchdb-push": "^2.3.2",
     "dotenv-safe": "^3.0.0",
     "glue": "^4.1.0",
     "got": "^6.6.3",
     "h2o2": "^5.4.0",
     "hapi": "^16.0.2",
+    "hapi-context-app": "^0.2.1",
+    "hapi-context-credentials": "^2.0.0",
+    "hapi-couchdb-login": "^0.2.1",
+    "hapi-error": "^1.6.0",
+    "hapi-favicon": "^1.0.0",
+    "hapijs-status-monitor": "^0.5.0",
+    "html-truncate": "^1.2.1",
+    "inert": "^4.1.0",
     "lodash-vision": "^0.1.0",
+    "marked": "^0.3.6",
     "meow": "^3.7.0",
+    "sharp": "^0.17.0",
     "update-notifier": "^1.0.3",
     "vision": "^4.1.1"
   },
@@ -42,10 +56,14 @@
     "ava": "^0.17.0",
     "babel-eslint": "^7.1.1",
     "coveralls": "^2.11.15",
+    "nodemon": "^1.11.0",
     "nyc": "^10.0.0",
     "standard": "^8.6.0"
   },
   "standard": {
-    "parser": "babel-eslint"
+    "parser": "babel-eslint",
+    "ignore": [
+      "assets/js/vendor"
+    ]
   }
 }

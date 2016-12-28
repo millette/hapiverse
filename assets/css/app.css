@@ -1,0 +1,44 @@
+label.file > img {
+  margin: 1em 0;
+}
+
+label.file > input[type="file"] {
+  display: none;
+}
+
+form > button[name="punch"] {
+  max-width: 100%;
+}
+
+form > a:first-child > img:first-child {
+  border: thin dashed red;
+}
+
+form > button[name="punch"],
+form > a:first-child > img:first-child {
+  overflow: hidden;
+/*
+  transition-duration: 1.3s;
+  transition-property: transform;
+*/
+}
+
+form > button[name="punch"]:hover,
+form > a:first-child > img:first-child:hover {
+/*
+  transform: rotate(360deg);
+*/
+}
+
+.punched {
+  animation: alert 1s;
+}
+
+@keyframes alert {
+  0% {
+    background-color: #fff;
+  }
+  100% {
+    background-color: #ff0;
+  }
+}

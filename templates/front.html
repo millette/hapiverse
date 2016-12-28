@@ -1,0 +1,8 @@
+<%= partials.head(data) %>
+<div class="front row small-up-2 medium-up-3 large-up-5">
+<% _(data.docs).each((doc) => { %>
+<%= partials['doc-front']({ doc: doc }) %>
+<% }) %>
+<%= partials['doc-front']({ doc: { _id: 'new', _attachments: { }, img: '/img/plus-3.png', title: 'Nouveau', end: true } }) %>
+</div>
+<%= partials.foot(data) %>

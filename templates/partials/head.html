@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%- data && data.app && data.app.siteTitle || 'Sans titre' %>
+    <% if (data.doc && data.doc.title) { %>
+      <%- data.doc.title %>
+    <% } %>
+  </title>
+  <link rel="stylesheet" media="all" href="/css/foundation.css">
+  <link rel="stylesheet" media="all" href="/css/app.css">
+</head>
+<body>
+  <div class="off-canvas-wrapper">
+    <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+      <div class="off-canvas position-left" id="offCanvasLeft" data-off-canvas>
+        <ul class="vertical menu">
+          <% _(data.menu).each((m) => { %>
+            <li<%= m.active ? ' class="active"' : '' %>><a href="<%- m.path %>"><%- m.title %></a></li>
+          <% }) %>
+        </ul>
+      </div>
+      <div class="off-canvas position-right" id="offCanvasRight" data-off-canvas data-position="right">
+        <!-- right off-canvas markup -->
+      </div>
+      <div class="off-canvas-content" data-off-canvas-content>
+        <div class="row<%- (data.credentials && data.pathparts && data.pathparts.length === 1 && data.pathparts[0] === '') ? ' expanded' : '' %>">
+        <button type="button" class="button" data-toggle="offCanvasLeft">Open Menu</button>
+        <% if (data.doc && data.doc.title) { %>
+          <h1><%- data.doc.title %></h1>
+          <nav aria-label="You are here:" role="navigation">
+            <ul class="breadcrumbs">
+              <li><a href="/">Accueil</a></li>
+              <li>
+                <span class="show-for-sr">Current: </span><%- data.doc.title || data.doc._id %>
+              </li>
+            </ul>
+          </nav>
+        <% } else { %>
+          <h1 class="text-center"><%- data && data.app && data.app.siteTitle %></h1>
+        <% } %>
+

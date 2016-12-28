@@ -1,0 +1,31 @@
+<div class="column">
+<form method="post">
+  <% if (data.doc.img) { %>
+    <a href="/punch/<%- data.doc._id %>" title="<%- data.doc.title || data.doc._id %>">
+        <img src="<%- data.doc.img %>" alt="<%- data.doc.title || data.doc._id %>">
+    </a>
+  <% } else { %>
+    <button name="punch" value="<%- data.doc._id %>">
+      <% if (data.doc.punches && data.doc.punches.length) { %>
+        <p>Punché
+        <time class="timeago" datetime="<%- data.doc.punches[data.doc.punches.length - 1].datetime %>">
+          <%- data.doc.punches[data.doc.punches.length - 1].datetime.replace('T', ' ') %>
+        </time>
+        </p>
+      <% } else { %>
+        <p>Jamais punché</p>
+      <% } %>
+      <% if (data.doc._attachments['top-image-3.jpeg']) { %>
+        <img src="/punch/<%- data.doc._id %>/top-image-3.jpeg" alt="<%- data.doc.title || data.doc._id %>">
+      <% } else if (data.doc._attachments['top-image-3.png']) { %>
+        <img src="/punch/<%- data.doc._id %>/top-image-3.png" alt="<%- data.doc.title || data.doc._id %>">
+      <% } else { %>
+        <%- data.doc.title || data.doc._id %>
+      <% } %>
+    </button>
+    <% if (data.doc.punch_comment) { %>
+      <input type="text" placeholder="comment" name="comment" required>
+    <% } %>
+  <% } %>
+</form>
+</div>
