@@ -6,41 +6,61 @@ const qs = require('querystring')
 
 // npm
 const Wreck = require('wreck')
+const _ = require('lodash')
 
-exports.register = (server, options, next) => {
-  const dbUrl = url.resolve(options.db.url, options.db.name)
-  const remotedbUrl = url.resolve(options.remotedb.url, options.remotedb.name)
+const labels = [
+  'primary',
+  'secondary',
+  'success',
+  'alert',
+  'warning'
+]
 
-  const mapper = (request, callback) => {
-    const dest = remotedbUrl + '/_design/app/_view/byKeyword?' + qs.stringify({
-      reduce: false,
-      startkey: '["hapi"]',
-      endkey: '["hapi\\ufff0"]'
-    })
-    callback(null, dest, { accept: 'application/json' })
-  }
+const perPage = 24
 
-  const responder = (err, res, request, reply) => {
+const labelClass = (keyword) => labels[_.reduce(keyword.split(''), (sum, v) => sum + v.charCodeAt(), 0) % 5]
+
+const hapiKeywordsMapper = (db, request, callback) => {
+  const dest = db + '/_design/app/_view/byKeyword?' + qs.stringify({
+    reduce: false,
+    startkey: '["hapi"]',
+    endkey: '["hapi\\ufff0"]'
+  })
+  callback(null, dest, { accept: 'application/json' })
+}
+
+const hapiKeywordsResponder = (err, res, request, reply) => {
+  // console.log('ER3:', err)
+  if (err) { return reply(err) } // FIXME: how to test?
+  if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+  const go = (err, payload) => {
+    // console.log('ER2:', err)
     if (err) { return reply(err) } // FIXME: how to test?
-    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
-    const go = (err, payload) => {
-      if (err) { return reply(err) } // FIXME: how to test?
-      console.log('PATH:', request.path)
-      console.log('PL-LEN:', payload.rows.length)
-      reply(payload.rows.map((row) => {
+    console.log('PATH:', request.path)
+    console.log('PL-LEN:', payload.rows.length)
+    reply(payload.rows
+      .map((row) => {
         row.keyword = row.key[0]
         row.description = row.key[2]
+        row.labelClass = labelClass(row.keyword)
         delete row.key
         delete row.value
         return row
-      }))
-    }
-    Wreck.read(res, { json: true }, go)
+      })
+      .sort((a, b) => {
+        if (a.id > b.id) return 1
+        if (a.id < b.id) return -1
+        return 0
+      })
+    )
   }
+  Wreck.read(res, { json: true }, go)
+}
 
-  server.method('hapiKeywords',
+const proxyMethod = (server, name, mapper, responder) => {
+  server.method(name,
     () => server.inject({
-      url: '/hapiKeywords',
+      url: '/' + name,
       allowInternals: true,
       validate: false
     }).then((res) => res.result),
@@ -48,14 +68,14 @@ exports.register = (server, options, next) => {
       callback: false,
       cache: {
         generateTimeout: 5000,
-        expiresIn: 900000 // 15 min.
+        expiresIn: 900000 // 15 min. // 15000
       }
     }
   )
 
   server.route({
     method: 'GET',
-    path: '/hapiKeywords',
+    path: '/' + name,
     config: {
       isInternal: true,
       handler: {
@@ -66,6 +86,105 @@ exports.register = (server, options, next) => {
       }
     }
   })
+}
+
+const pager = function (request, reply) {
+/*
+<<PREV -[1]- 2 - 3 - ... - 10 - NEXT>
+<<PREV - 1 -[2]- 3 - 4 - ... - 10 - NEXT>
+<<PREV - 1 - 2 -[3]- 4 - 5 -...- 10 - NEXT>
+<<PREV - 1 - 2 - 3 -[4]- 5 - 6 -...- 10 - NEXT>
+<<PREV - 1 - 2 - 3 - 4 -[5]- 6 - 7 -...- 10 - NEXT>
+<<PREV - 1 -...- 4 - 5 -[6]- 7 - 8 - 10 - NEXT>
+<<PREV - 1 -...- 5 - 6 -[7] - 8 - 9 - 10 - NEXT>
+<<PREV - 1 -...- 6 - 7 -[8] - 9 - 10 - NEXT>
+<<PREV - 1 -...- 7 - 8 -[9] - 10 - NEXT>
+<<PREV - 1 -... -8 - 9 -[10] - NEXT>
+
+
+<<PREV -[1]- 2 - 3 - 4 - ... - 10 - NEXT>
+<<PREV - 1 -[2]- 3 - 4 - ... - 10 - NEXT>
+<<PREV - 1 - 2 -[3]- 4 - ... - 10 - NEXT>
+<<PREV - 1 - 2 - 3 -[4]- ... - 10 - NEXT>
+<<PREV - 1 - 2 - [3] - 4 - ... - 10 - NEXT>
+<<PREV - 1 - 2 - [3] - 4 - ... - 10 - NEXT>
+<<PREV - 1 - 2 - [3] - 4 - ... - 10 - NEXT>
+
+
+*/
+  const page = parseInt(request.query && request.query.page || 1, 10)
+  const nPages = Math.ceil(request.pre.info.length / perPage)
+  const show = 2
+
+  let t
+  let r
+  let l
+  let left = []
+  let right = []
+  for (t = 1; t <= show; ++t) {
+    l = page - t
+    if (l >= 1) { left.push(l) }
+    r = page + t
+    if (r <= nPages ) { right.push(r) }
+  }
+
+  left = left.sort((a, b) => {
+    if (a > b) return 1
+    if (a < b) return -1
+    return 0
+  })
+
+  const l0 = left[0]
+  if (l0 > 3) {
+    left.unshift('...')
+  } else if (l0 > 2) {
+    left.unshift(2)
+  }
+  if (l0 > 1) { left.unshift(1) }
+
+  const r0 = right[right.length - 1]
+  if (r0 < nPages - 2) {
+    right.push('...')
+  } else if (r0 < nPages - 1) {
+    right.push(nPages - 1)
+  }
+  if (r0 < nPages) { right.push(nPages) }
+
+  let full = left
+    .concat(page, right)
+    .map((x) => {
+      if (x === '...') return x
+      if (x === page) return { v: x, current: true }
+      return x
+    })
+
+  if (page === 1) {
+    full.unshift({ v: 'prev', disabled: true })
+  } else {
+    full.unshift({ v: 'prev', page: page - 1 })
+  }
+
+  if (page === nPages) {
+    full.push({ v: 'next', disabled: true })
+  } else {
+    full.push({ v: 'next', page: page + 1 })
+  }
+
+  reply(full)
+}
+
+const info = function (s, request, reply) {
+  s.methods.hapiKeywords((err, res) => {
+    if (err) { return reply(err) }
+    reply(res)
+  })
+}
+
+exports.register = (server, options, next) => {
+  const dbUrl = url.resolve(options.db.url, options.db.name)
+  const remotedbUrl = url.resolve(options.remotedb.url, options.remotedb.name)
+
+  proxyMethod(server, 'hapiKeywords', hapiKeywordsMapper.bind(this, remotedbUrl), hapiKeywordsResponder)
 
   server.route({
     method: 'GET',
@@ -76,11 +195,20 @@ exports.register = (server, options, next) => {
   server.route({
     method: 'GET',
     path: '/yo',
-    handler: function (request, reply) {
-      server.methods.hapiKeywords((err, res) => {
-        if (err) { return reply(err) }
-        reply.view('yeah', { modules: res.slice(0, 48) })
-      })
+    config: {
+      pre: [
+        { method: info.bind(this, server), assign: 'info' },
+        { method: pager, assign: 'pager' }
+      ],
+      handler: function (request, reply) {
+        server.methods.hapiKeywords((err, res) => {
+          // console.log('ER1:', err)
+          if (err) { return reply(err) }
+          const page = request.query && request.query.page || 1
+          const start = (page - 1) * perPage
+          reply.view('yeah', { pager: request.pre.pager, modules: request.pre.info.slice(start, start + perPage) })
+        })
+      }
     }
   })
 

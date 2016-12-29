@@ -1,0 +1,25 @@
+<div class="row column">
+<ul class="pagination" role="navigation" aria-label="Pagination">
+  <% data.pager.forEach(function (i) { %>
+    <% if (i.v === 'prev') { %>
+      <% if (i.disabled) { %>
+        <li class="pagination-previous disabled">Previous <span class="show-for-sr">page</span></li>
+      <% } else { %>
+        <li class="pagination-previous"><a href="/<%- data.pathparts.join('/') %>?page=<%- i.page %>" aria-label="Previous page">Previous <span class="show-for-sr">page</span></a></li>
+      <% } %>
+    <% } else if (i.v === 'next') { %>
+      <% if (i.disabled) { %>
+        <li class="pagination-next disabled">Next <span class="show-for-sr">page</span></li>
+      <% } else { %>
+        <li class="pagination-next"><a href="/<%- data.pathparts.join('/') %>?page=<%- i.page %>" aria-label="Next page">Next <span class="show-for-sr">page</span></a></li>
+      <% } %>
+    <% } else if (i === '...') { %>
+      <li class="ellipsis" aria-hidden="true"></li>
+    <% } else if (i.current) { %>
+      <li class="current"><span class="show-for-sr">You're on page</span> <%- i.v %></li>
+    <% } else { %>
+      <li><a href="/<%- data.pathparts.join('/') %>?page=<%- i %>" aria-label="Page <%- i %>"><%- i %></a></li>
+    <% } %>
+  <% }) %>
+</ul>
+</div>
