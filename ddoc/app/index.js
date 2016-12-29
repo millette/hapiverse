@@ -8,6 +8,7 @@ const path = require('path')
 
 const makeDdoc = () => {
   const ddoc = { _id: '_design/' + path.basename(__dirname), language: 'javascript' }
+  // const ddoc = { _id: '_design/' + path.basename(__dirname) }
   const wrk = (file) => {
     const parts = file.split('/')
     if (parts.length !== 2) { throw new Error('bad path in design doc') }
