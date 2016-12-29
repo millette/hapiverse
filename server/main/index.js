@@ -168,8 +168,8 @@ const pager = function (request, reply) {
   reply(full)
 }
 
-const info = function (s, request, reply) {
-  s.methods.hapiKeywords((err, res) => {
+const info = function (request, reply) {
+  request.server.methods.hapiKeywords((err, res) => {
     // console.log('ER-A:', err)
     if (err) { return reply(err) }
     reply(res)
@@ -193,7 +193,7 @@ exports.register = (server, options, next) => {
     path: '/yo',
     config: {
       pre: [
-        { method: info.bind(this, server), assign: 'info' },
+        { method: info, assign: 'info' },
         { method: pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
