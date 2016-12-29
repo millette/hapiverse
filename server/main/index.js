@@ -36,9 +36,9 @@ const hapiKeywordsResponder = (err, res, request, reply) => {
   const go = (err, payload) => {
     // console.log('ER2:', err)
     if (err) { return reply(err) } // FIXME: how to test?
-    console.log('PATH:', request.path)
-    console.log('PL-LEN:', payload.rows.length)
-    reply(payload.rows
+    // console.log('PATH:', request.path)
+    // console.log('PL-LEN:', payload.rows.length)
+    const rows = payload.rows
       .map((row) => {
         row.keyword = row.key[0]
         row.description = row.key[2]
@@ -47,12 +47,29 @@ const hapiKeywordsResponder = (err, res, request, reply) => {
         delete row.value
         return row
       })
-      .sort((a, b) => {
-        if (a.id > b.id) return 1
-        if (a.id < b.id) return -1
-        return 0
+
+    const result = _.groupBy(rows, (v) => v.id)
+
+    const out = []
+    let r
+    for (r in result) {
+      out.push({
+        id: r,
+        description: result[r][0].description,
+        tags: result[r].map((g) => {
+          return {
+            keyword: g.keyword,
+            labelClass: g.labelClass
+          }
+        })
       })
-    )
+    }
+    // console.log('LES-OUT:', JSON.stringify(out.slice(0, 1), null, ' '))
+    reply(out.sort((a, b) => {
+      if (a.id > b.id) { return 1 }
+      if (a.id < b.id) { return -1 }
+      return 0
+    }))
   }
   Wreck.read(res, { json: true }, go)
 }
@@ -63,12 +80,13 @@ const proxyMethod = (server, name, mapper, responder) => {
       url: '/' + name,
       allowInternals: true,
       validate: false
-    }).then((res) => res.result),
+    })
+      .then((res) => res.result),
     {
       callback: false,
       cache: {
         generateTimeout: 5000,
-        expiresIn: 900000 // 15 min. // 15000
+        expiresIn: 900000 // 30000 // 900000 // 15 min. // 15000
       }
     }
   )
@@ -89,29 +107,6 @@ const proxyMethod = (server, name, mapper, responder) => {
 }
 
 const pager = function (request, reply) {
-/*
-<<PREV -[1]- 2 - 3 - ... - 10 - NEXT>
-<<PREV - 1 -[2]- 3 - 4 - ... - 10 - NEXT>
-<<PREV - 1 - 2 -[3]- 4 - 5 -...- 10 - NEXT>
-<<PREV - 1 - 2 - 3 -[4]- 5 - 6 -...- 10 - NEXT>
-<<PREV - 1 - 2 - 3 - 4 -[5]- 6 - 7 -...- 10 - NEXT>
-<<PREV - 1 -...- 4 - 5 -[6]- 7 - 8 - 10 - NEXT>
-<<PREV - 1 -...- 5 - 6 -[7] - 8 - 9 - 10 - NEXT>
-<<PREV - 1 -...- 6 - 7 -[8] - 9 - 10 - NEXT>
-<<PREV - 1 -...- 7 - 8 -[9] - 10 - NEXT>
-<<PREV - 1 -... -8 - 9 -[10] - NEXT>
-
-
-<<PREV -[1]- 2 - 3 - 4 - ... - 10 - NEXT>
-<<PREV - 1 -[2]- 3 - 4 - ... - 10 - NEXT>
-<<PREV - 1 - 2 -[3]- 4 - ... - 10 - NEXT>
-<<PREV - 1 - 2 - 3 -[4]- ... - 10 - NEXT>
-<<PREV - 1 - 2 - [3] - 4 - ... - 10 - NEXT>
-<<PREV - 1 - 2 - [3] - 4 - ... - 10 - NEXT>
-<<PREV - 1 - 2 - [3] - 4 - ... - 10 - NEXT>
-
-
-*/
   const page = parseInt(request.query && request.query.page || 1, 10)
   const nPages = Math.ceil(request.pre.info.length / perPage)
   const show = 2
@@ -125,7 +120,7 @@ const pager = function (request, reply) {
     l = page - t
     if (l >= 1) { left.push(l) }
     r = page + t
-    if (r <= nPages ) { right.push(r) }
+    if (r <= nPages) { right.push(r) }
   }
 
   left = left.sort((a, b) => {
@@ -175,6 +170,7 @@ const pager = function (request, reply) {
 
 const info = function (s, request, reply) {
   s.methods.hapiKeywords((err, res) => {
+    // console.log('ER-A:', err)
     if (err) { return reply(err) }
     reply(res)
   })

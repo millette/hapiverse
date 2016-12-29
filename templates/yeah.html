@@ -4,7 +4,12 @@
   <div class="column">
     <div class="callout" data-equalizer-watch>
       <h4><%- module.id %></h4>
-      <p><%- module.description %> <span class="label <%- module.labelClass %>"><%- module.keyword %></span></p>
+      <p><%- module.description %></p>
+      <p>
+      <% module.tags.forEach((tag) => { %>
+        <span class="label <%- tag.labelClass %>"><%- tag.keyword %></span>
+      <% }) %>
+      </p>
     </div>
   </div>
 <% }) %>
