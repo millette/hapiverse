@@ -179,8 +179,6 @@ exports.register = (server, options, next) => {
     server.methods.localKeywords((err, res) => {
       // console.log('ER-A:', err)
       if (err) { return reply(err) }
-      // console.log('RES:', res)
-      // reply.view('keywords', {
       reply(
         res.sort((a, b) => {
           if (a.value > b.value) { return 1 }
@@ -221,7 +219,6 @@ exports.register = (server, options, next) => {
   server.route({
     method: 'GET',
     path: '/keywords',
-    // handler: localKeywords
     config: {
       pre: [
         { method: localKeywords, assign: 'info' },
@@ -231,7 +228,6 @@ exports.register = (server, options, next) => {
         const page = request.query && request.query.page || 1
         const start = (page - 1) * utils.perPage
         const o = { nKeywords: request.pre.info.length, pager: request.pre.pager, keywords: request.pre.info.slice(start, start + utils.perPage) }
-        // console.log('OOO:', o)
         reply.view('keywords', o)
       }
     }
@@ -283,7 +279,6 @@ exports.register = (server, options, next) => {
         const page = request.query && request.query.page || 1
         const start = (page - 1) * utils.perPage
         const o = { pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
-        // console.log('OOO:', o)
         reply.view('all', o)
       }
     }
