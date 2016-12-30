@@ -190,6 +190,19 @@ exports.register = (server, options, next) => {
 
   server.route({
     method: 'GET',
+    path: '/ids',
+    config: {
+      pre: [
+        { method: info, assign: 'info' }
+      ],
+      handler: function (request, reply) {
+        reply.view('pre', { len: request.pre.info.length, ids: request.pre.info.map((x) => x.id) })
+      }
+    }
+  })
+
+  server.route({
+    method: 'GET',
     path: '/yo',
     config: {
       pre: [
@@ -197,13 +210,9 @@ exports.register = (server, options, next) => {
         { method: pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
-        server.methods.hapiKeywords((err, res) => {
-          // console.log('ER1:', err)
-          if (err) { return reply(err) }
-          const page = request.query && request.query.page || 1
-          const start = (page - 1) * perPage
-          reply.view('yeah', { pager: request.pre.pager, modules: request.pre.info.slice(start, start + perPage) })
-        })
+        const page = request.query && request.query.page || 1
+        const start = (page - 1) * perPage
+        reply.view('yeah', { pager: request.pre.pager, modules: request.pre.info.slice(start, start + perPage) })
       }
     }
   })
