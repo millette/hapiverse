@@ -1,0 +1,26 @@
+<%= partials.head(data) %>
+<div class="row column">
+  <h2>Locally known modules</h2>
+<div class="row small-up-2 medium-up-3 large-up-4" data-equalizer data-equalize-by-row="true">
+<%
+  data.modules.forEach((module) => {
+    module = module.doc.versions[module.doc['dist-tags'].latest]
+%>
+  <div class="column">
+    <div class="callout" data-equalizer-watch>
+      <h4><%- module.name %></h4>
+      <p><%- module.description %></p>
+      <% if (module.keywords && module.keywords.length) { %>
+      <p>
+      <% module.keywords.forEach((tag) => { %>
+        <span class="label"><%- tag %></span>
+      <% }) %>
+      </p>
+      <% } %>
+    </div>
+  </div>
+<% }) %>
+</div>
+<%= partials.pager(data) %>
+</div>
+<%= partials.foot(data) %>

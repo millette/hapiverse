@@ -110,6 +110,21 @@ exports.register = (server, options, next) => {
       })
   }
 
+  const mapperAll = (request, callback) => {
+    const dest = dbUrl + '/_design/verse/_view/all?reduce=false&include_docs=true'
+    callback(null, dest, { accept: 'application/json' })
+  }
+
+  const responderAll = (err, res, request, reply) => {
+    // console.log('ER3:', err)
+    if (err) { return reply(err) } // FIXME: how to test?
+    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+    const go = (err, payload) => {
+      reply(payload.rows)
+    }
+    Wreck.read(res, { json: true }, go)
+  }
+
   const mapperKnown = (request, callback) => {
     const dest = dbUrl + '/_design/verse/_view/all'
     callback(null, dest, { accept: 'application/json' })
@@ -127,6 +142,12 @@ exports.register = (server, options, next) => {
 
   const known = function (request, reply) {
     server.inject({url:'/known', validate: false})
+      .then((res) => reply(res.result))
+      .catch((e) => reply(e))
+  }
+
+  const all = function (request, reply) {
+    server.inject({url:'/all.json', validate: false})
       .then((res) => reply(res.result))
       .catch((e) => reply(e))
   }
@@ -175,16 +196,29 @@ exports.register = (server, options, next) => {
 
   server.route({
     method: 'GET',
+    path: '/all.json',
+    handler: {
+      proxy: {
+        mapUri: mapperAll,
+        onResponse: responderAll
+      }
+    }
+  })
+
+  server.route({
+    method: 'GET',
     path: '/all',
     config: {
       pre: [
-        { method: info, assign: 'info' },
+        { method: all, assign: 'info' },
         { method: utils.pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
         const page = request.query && request.query.page || 1
         const start = (page - 1) * utils.perPage
-        reply.view('all', { pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) })
+        const o = { pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
+        // console.log('OOO:', o)
+        reply.view('all', o)
       }
     }
   })
