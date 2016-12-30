@@ -147,12 +147,41 @@ exports.register = (server, options, next) => {
   }
 
   const all = function (request, reply) {
+    server.methods.allJson((err, res) => {
+      // console.log('ER-A:', err)
+      if (err) { return reply(err) }
+      reply(res)
+    })
+  }
+
+/*
+  request.server.methods.hapiKeywords((err, res) => {
+    // console.log('ER-A:', err)
+    if (err) { return reply(err) }
+    reply(res)
+  })
+*/
+
+/*
     server.inject({url:'/all.json', validate: false})
       .then((res) => reply(res.result))
       .catch((e) => reply(e))
   }
+*/
 
-  utils.proxyMethod(server, 'hapiKeywords', hapiKeywordsMapper.bind(this, remotedbUrl), hapiKeywordsResponder)
+  utils.proxyMethod(
+    server,
+    'allJson',
+    mapperAll,
+    responderAll
+  )
+
+  utils.proxyMethod(
+    server,
+    'hapiKeywords',
+    hapiKeywordsMapper.bind(this, remotedbUrl),
+    hapiKeywordsResponder
+  )
 
   server.route({
     method: 'GET',
@@ -194,6 +223,7 @@ exports.register = (server, options, next) => {
     }
   })
 
+/*
   server.route({
     method: 'GET',
     path: '/all.json',
@@ -204,6 +234,7 @@ exports.register = (server, options, next) => {
       }
     }
   })
+*/
 
   server.route({
     method: 'GET',
