@@ -112,6 +112,23 @@ exports.register = (server, options, next) => {
       })
   }
 
+  const mapperlocalKeywords = (request, callback) => {
+    const dest = dbUrl + '/_design/app/_view/byKeyword?group_level=1'
+    console.log('DEST:', dest)
+    callback(null, dest, { accept: 'application/json' })
+  }
+
+  const responderlocalKeywords = (err, res, request, reply) => {
+    // console.log('ER3:', err)
+    if (err) { return reply(err) } // FIXME: how to test?
+    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+    const go = (err, payload) => {
+      if (err) { return reply(err) } // FIXME: how to test?
+      reply(payload.rows)
+    }
+    Wreck.read(res, { json: true }, go)
+  }
+
   const mapperAll = (request, callback) => {
     const dest = dbUrl + '/_design/verse/_view/all?reduce=false&include_docs=true'
     callback(null, dest, { accept: 'application/json' })
@@ -122,6 +139,7 @@ exports.register = (server, options, next) => {
     if (err) { return reply(err) } // FIXME: how to test?
     if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
     const go = (err, payload) => {
+      if (err) { return reply(err) } // FIXME: how to test?
       reply(payload.rows)
     }
     Wreck.read(res, { json: true }, go)
@@ -137,13 +155,14 @@ exports.register = (server, options, next) => {
     if (err) { return reply(err) } // FIXME: how to test?
     if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
     const go = (err, payload) => {
+      if (err) { return reply(err) } // FIXME: how to test?
       reply(payload.rows[0].value)
     }
     Wreck.read(res, { json: true }, go)
   }
 
   const known = function (request, reply) {
-    server.inject({url:'/known', validate: false})
+    server.inject({ url: '/known', validate: false })
       .then((res) => reply(res.result))
       .catch((e) => reply(e))
   }
@@ -155,6 +174,28 @@ exports.register = (server, options, next) => {
       reply(res)
     })
   }
+
+  const localKeywords = function (request, reply) {
+    server.methods.localKeywords((err, res) => {
+      // console.log('ER-A:', err)
+      if (err) { return reply(err) }
+      // console.log('RES:', res)
+      reply.view('keywords', {
+        keywords: res.sort((a, b) => {
+          if (a.value > b.value) { return 1 }
+          if (a.value < b.value) { return -1 }
+          return 0
+        }).reverse()
+      })
+    })
+  }
+
+  utils.proxyMethod(
+    server,
+    'localKeywords',
+    mapperlocalKeywords,
+    responderlocalKeywords
+  )
 
   utils.proxyMethod(
     server,
@@ -174,6 +215,12 @@ exports.register = (server, options, next) => {
     method: 'GET',
     path: '/',
     handler: { view: 'hello' }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/keywords',
+    handler: localKeywords
   })
 
   server.route({

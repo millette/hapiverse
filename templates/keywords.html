@@ -1,0 +1,15 @@
+<%= partials.head(data) %>
+<div class="row column">
+  <h2>Locally known keywords <small><%- data.keywords.length %></small></h2>
+<div class="row small-up-2 medium-up-3 large-up-4" data-equalizer data-equalize-by-row="true">
+<% data.keywords.forEach((keyword) => { %>
+  <% if (false && keyword.value < 2) { return } %>
+  <div class="column">
+    <div class="callout" data-equalizer-watch>
+      <h4><%- keyword.key[0] %> <small><%- keyword.value %></small></h4>
+    </div>
+  </div>
+<% }) %>
+</div>
+</div>
+<%= partials.foot(data) %>
