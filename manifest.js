@@ -56,7 +56,9 @@ const manifest = {
         options: {
           db: {
             url: Config.get('/db/url'),
-            name: Config.get('/db/name')
+            name: Config.get('/db/name'),
+            admin: Config.get('/db/admin'),
+            password: Config.get('/db/password')
           },
           remotedb: {
             url: Config.get('/remotedb/url'),

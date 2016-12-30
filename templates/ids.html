@@ -1,5 +1,10 @@
 <%= partials.head(data) %>
 <div class="row column">
+<form method="post">
+<p>
+<button class="button warning">Replicate <%- data.len %> IDs</button>
+</p>
+</form>
 <pre><%- JSON.stringify(data, null, ' ') %></pre>
 </div>
 <%= partials.foot(data) %>

@@ -7,6 +7,7 @@ const qs = require('querystring')
 // npm
 const Wreck = require('wreck')
 const _ = require('lodash')
+const got = require('got')
 
 // self
 const utils = require('./utils')
@@ -86,6 +87,29 @@ exports.register = (server, options, next) => {
   const dbUrl = url.resolve(options.db.url, options.db.name)
   const remotedbUrl = url.resolve(options.remotedb.url, options.remotedb.name)
 
+  const replicate = function (request, reply) {
+    const ids = request.pre.info.map((x) => x.id)
+    ids.push('_design/app')
+
+    const o = {
+      headers: { 'Content-Type': 'application/json' },
+      json: true,
+      auth: options.db.admin + ':' + options.db.password,
+      body: JSON.stringify({
+        source: remotedbUrl,
+        target: options.db.name,
+        doc_ids: ids
+      })
+    }
+
+    got.post(url.resolve(options.db.url, '_replicate'), o)
+      .then((x) => reply(x.body))
+      .catch((e) => {
+        console.log('eeee:', e)
+        reply(e)
+      })
+  }
+
   utils.proxyMethod(server, 'hapiKeywords', hapiKeywordsMapper.bind(this, remotedbUrl), hapiKeywordsResponder)
 
   server.route({
@@ -98,14 +122,22 @@ exports.register = (server, options, next) => {
     method: 'GET',
     path: '/ids',
     config: {
-      pre: [
-        { method: info, assign: 'info' }
-      ],
+      pre: [{ method: info, assign: 'info' }],
       handler: function (request, reply) {
-        reply.view('pre', { len: request.pre.info.length, ids: request.pre.info.map((x) => x.id) })
+        reply.view('ids', { len: request.pre.info.length, ids: request.pre.info.map((x) => x.id) })
       }
     }
   })
+
+  server.route({
+    method: 'POST',
+    path: '/ids',
+    config: {
+      pre: [{ method: info, assign: 'info' }],
+      handler: replicate
+    }
+  })
+
 
   server.route({
     method: 'GET',
