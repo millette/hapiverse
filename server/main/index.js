@@ -114,7 +114,7 @@ exports.register = (server, options, next) => {
 
   const mapperlocalKeywords = (request, callback) => {
     const dest = dbUrl + '/_design/app/_view/byKeyword?group_level=1'
-    console.log('DEST:', dest)
+    // console.log('DEST:', dest)
     callback(null, dest, { accept: 'application/json' })
   }
 
@@ -180,13 +180,14 @@ exports.register = (server, options, next) => {
       // console.log('ER-A:', err)
       if (err) { return reply(err) }
       // console.log('RES:', res)
-      reply.view('keywords', {
-        keywords: res.sort((a, b) => {
+      // reply.view('keywords', {
+      reply(
+        res.sort((a, b) => {
           if (a.value > b.value) { return 1 }
           if (a.value < b.value) { return -1 }
           return 0
         }).reverse()
-      })
+      )
     })
   }
 
@@ -220,7 +221,20 @@ exports.register = (server, options, next) => {
   server.route({
     method: 'GET',
     path: '/keywords',
-    handler: localKeywords
+    // handler: localKeywords
+    config: {
+      pre: [
+        { method: localKeywords, assign: 'info' },
+        { method: utils.pager, assign: 'pager' }
+      ],
+      handler: function (request, reply) {
+        const page = request.query && request.query.page || 1
+        const start = (page - 1) * utils.perPage
+        const o = { nKeywords: request.pre.info.length, pager: request.pre.pager, keywords: request.pre.info.slice(start, start + utils.perPage) }
+        // console.log('OOO:', o)
+        reply.view('keywords', o)
+      }
+    }
   })
 
   server.route({

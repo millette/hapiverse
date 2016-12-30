@@ -1,6 +1,7 @@
 <%= partials.head(data) %>
 <div class="row column">
-  <h2>Locally known keywords <small><%- data.keywords.length %></small></h2>
+  <h2>Locally known keywords <small><%- data.nKeywords %></small></h2>
+<%= partials.pager(data) %>
 <div class="row small-up-2 medium-up-3 large-up-4" data-equalizer data-equalize-by-row="true">
 <% data.keywords.forEach((keyword) => { %>
   <% if (false && keyword.value < 2) { return } %>
@@ -11,5 +12,6 @@
   </div>
 <% }) %>
 </div>
+<%= partials.pager(data) %>
 </div>
 <%= partials.foot(data) %>
