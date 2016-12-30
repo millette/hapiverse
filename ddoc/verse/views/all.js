@@ -4,7 +4,7 @@
 
 module.exports = {
   map: function (doc) {
-    emit(doc._id, { rev: doc._rev })
+    emit(doc.name, { rev: doc._rev })
   },
   reduce: '_count'
 }

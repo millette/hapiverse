@@ -67,8 +67,10 @@ const hapiKeywordsResponder = (err, res, request, reply) => {
       })
     }
     reply(out.sort((a, b) => {
-      if (a.id > b.id) { return 1 }
-      if (a.id < b.id) { return -1 }
+      const aid = a.id.toLowerCase()
+      const bid = b.id.toLowerCase()
+      if (aid > bid) { return 1 }
+      if (aid < bid) { return -1 }
       return 0
     }))
   }

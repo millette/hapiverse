@@ -1,6 +1,7 @@
 <%= partials.head(data) %>
 <div class="row column">
   <h2>Modules available on npm registry</h2>
+<%= partials.pager(data) %>
 <div class="row small-up-2 medium-up-3 large-up-4" data-equalizer data-equalize-by-row="true">
 <% data.modules.forEach((module) => { %>
   <div class="column">

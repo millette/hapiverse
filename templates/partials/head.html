@@ -16,6 +16,10 @@
     <div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
       <div class="off-canvas position-left" id="offCanvasLeft" data-off-canvas>
         <ul class="vertical menu">
+          <li><a href="/">Accueil</a></li>
+          <li><a href="/yo">Yo</a></li>
+          <li><a href="/ids">Ids</a></li>
+          <li><a href="/all">All</a></li>
           <% _(data.menu).each((m) => { %>
             <li<%= m.active ? ' class="active"' : '' %>><a href="<%- m.path %>"><%- m.title %></a></li>
           <% }) %>
