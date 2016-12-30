@@ -75,7 +75,7 @@ const proxyMethod = (server, name, mapper, responder) => {
     {
       callback: false,
       cache: {
-        generateTimeout: 5000,
+        generateTimeout: 15000,
         expiresIn: 900000 // 30000 // 900000 // 15 min. // 15000
       }
     }
