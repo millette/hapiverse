@@ -74,38 +74,6 @@ const hapiKeywordsResponder = (err, res, request, reply) => {
   Wreck.read(res, { json: true }, go)
 }
 
-const proxyMethod = (server, name, mapper, responder) => {
-  server.method(name,
-    () => server.inject({
-      url: '/' + name,
-      allowInternals: true,
-      validate: false
-    })
-      .then((res) => res.result),
-    {
-      callback: false,
-      cache: {
-        generateTimeout: 5000,
-        expiresIn: 900000 // 30000 // 900000 // 15 min. // 15000
-      }
-    }
-  )
-
-  server.route({
-    method: 'GET',
-    path: '/' + name,
-    config: {
-      isInternal: true,
-      handler: {
-        proxy: {
-          mapUri: mapper,
-          onResponse: responder
-        }
-      }
-    }
-  })
-}
-
 const info = function (request, reply) {
   request.server.methods.hapiKeywords((err, res) => {
     // console.log('ER-A:', err)
@@ -118,7 +86,7 @@ exports.register = (server, options, next) => {
   const dbUrl = url.resolve(options.db.url, options.db.name)
   const remotedbUrl = url.resolve(options.remotedb.url, options.remotedb.name)
 
-  proxyMethod(server, 'hapiKeywords', hapiKeywordsMapper.bind(this, remotedbUrl), hapiKeywordsResponder)
+  utils.proxyMethod(server, 'hapiKeywords', hapiKeywordsMapper.bind(this, remotedbUrl), hapiKeywordsResponder)
 
   server.route({
     method: 'GET',

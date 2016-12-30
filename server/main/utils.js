@@ -64,7 +64,40 @@ const pager = function (request, reply) {
   reply(full)
 }
 
+const proxyMethod = (server, name, mapper, responder) => {
+  server.method(name,
+    () => server.inject({
+      url: '/' + name,
+      allowInternals: true,
+      validate: false
+    })
+      .then((res) => res.result),
+    {
+      callback: false,
+      cache: {
+        generateTimeout: 5000,
+        expiresIn: 900000 // 30000 // 900000 // 15 min. // 15000
+      }
+    }
+  )
+
+  server.route({
+    method: 'GET',
+    path: '/' + name,
+    config: {
+      isInternal: true,
+      handler: {
+        proxy: {
+          mapUri: mapper,
+          onResponse: responder
+        }
+      }
+    }
+  })
+}
+
 module.exports = {
+  proxyMethod: proxyMethod,
   pager: pager,
   perPage: perPage
 }
