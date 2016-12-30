@@ -154,21 +154,6 @@ exports.register = (server, options, next) => {
     })
   }
 
-/*
-  request.server.methods.hapiKeywords((err, res) => {
-    // console.log('ER-A:', err)
-    if (err) { return reply(err) }
-    reply(res)
-  })
-*/
-
-/*
-    server.inject({url:'/all.json', validate: false})
-      .then((res) => reply(res.result))
-      .catch((e) => reply(e))
-  }
-*/
-
   utils.proxyMethod(
     server,
     'allJson',
@@ -222,19 +207,6 @@ exports.register = (server, options, next) => {
       handler: replicate
     }
   })
-
-/*
-  server.route({
-    method: 'GET',
-    path: '/all.json',
-    handler: {
-      proxy: {
-        mapUri: mapperAll,
-        onResponse: responderAll
-      }
-    }
-  })
-*/
 
   server.route({
     method: 'GET',
