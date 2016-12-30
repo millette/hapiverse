@@ -110,6 +110,27 @@ exports.register = (server, options, next) => {
       })
   }
 
+  const mapperKnown = (request, callback) => {
+    const dest = dbUrl + '/_design/verse/_view/all'
+    callback(null, dest, { accept: 'application/json' })
+  }
+
+  const responderKnown = (err, res, request, reply) => {
+    // console.log('ER3:', err)
+    if (err) { return reply(err) } // FIXME: how to test?
+    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+    const go = (err, payload) => {
+      reply(payload.rows[0].value)
+    }
+    Wreck.read(res, { json: true }, go)
+  }
+
+  const known = function (request, reply) {
+    server.inject({url:'/known', validate: false})
+      .then((res) => reply(res.result))
+      .catch((e) => reply(e))
+  }
+
   utils.proxyMethod(server, 'hapiKeywords', hapiKeywordsMapper.bind(this, remotedbUrl), hapiKeywordsResponder)
 
   server.route({
@@ -122,9 +143,23 @@ exports.register = (server, options, next) => {
     method: 'GET',
     path: '/ids',
     config: {
-      pre: [{ method: info, assign: 'info' }],
+      pre: [
+        { method: known, assign: 'known' },
+        { method: info, assign: 'info' }
+      ],
       handler: function (request, reply) {
-        reply.view('ids', { len: request.pre.info.length, ids: request.pre.info.map((x) => x.id) })
+        reply.view('ids', { known: request.pre.known, len: request.pre.info.length, ids: request.pre.info.map((x) => x.id) })
+      }
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/known',
+    handler: {
+      proxy: {
+        mapUri: mapperKnown,
+        onResponse: responderKnown
       }
     }
   })
@@ -138,6 +173,21 @@ exports.register = (server, options, next) => {
     }
   })
 
+  server.route({
+    method: 'GET',
+    path: '/all',
+    config: {
+      pre: [
+        { method: info, assign: 'info' },
+        { method: utils.pager, assign: 'pager' }
+      ],
+      handler: function (request, reply) {
+        const page = request.query && request.query.page || 1
+        const start = (page - 1) * utils.perPage
+        reply.view('all', { pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) })
+      }
+    }
+  })
 
   server.route({
     method: 'GET',
