@@ -10,5 +10,5 @@ module.exports = (Config, callback) => {
   const u = url.parse(Config.get('/db/url'))
   u.auth = Config.get('/db/admin') + ':' + Config.get('/db/password')
   u.pathname = Config.get('/db/name')
-  push(url.format(u), 'ddoc/app', { index: true, watch: true }, callback)
+  push(url.format(u), 'ddoc/verse', { index: true, watch: true }, callback)
 }
