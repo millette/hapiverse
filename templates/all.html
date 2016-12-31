@@ -2,13 +2,13 @@
 <div class="row column">
   <h2>
     <%- data.nModules %> locally known modules
+    <small>
     <% if (data.keyword) { %>
-      <small>
         <%- data.keyword %>
-        (<a href="/all">any keyword</a> |
-        <a href="/keywords">keywords</a>)
-      </small>
+        <a href="/all">any keyword</a> |
     <% } %>
+        <a href="/keywords">keywords</a>
+    </small>
   </h2>
 <%= partials.pager(data) %>
 <div class="row small-up-2 medium-up-3 large-up-4" data-equalizer data-equalize-by-row="true">
@@ -19,6 +19,7 @@
   <div class="column">
     <div class="callout" data-equalizer-watch>
       <h4><%- module.name %> <small><%- moduleFull.doc['dist-tags'].latest %></small></h4>
+      <p><%- new Date(moduleFull.doc.time.modified).toLocaleString() %></p>
       <p><%- module.description %></p>
       <% if (module.keywords && module.keywords.length) { %>
       <p class="small button-group">
