@@ -145,6 +145,33 @@ exports.register = (server, options, next) => {
     Wreck.read(res, { json: true }, go)
   }
 
+  const mapperModule = (request, callback) => {
+    const dest = dbUrl + '/' + request.params.module
+    callback(null, dest, { accept: 'application/json' })
+  }
+
+  const responderModule = (err, res, request, reply) => {
+    // console.log('ER3:', err)
+    if (err) { return reply(err) } // FIXME: how to test?
+    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+    const go = (err, payload) => {
+      if (err) { return reply(err) } // FIXME: how to test?
+      reply.view('module', payload)
+    }
+    Wreck.read(res, { json: true }, go)
+  }
+
+  const responderModuleModal = (err, res, request, reply) => {
+    // console.log('ER3:', err)
+    if (err) { return reply(err) } // FIXME: how to test?
+    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+    const go = (err, payload) => {
+      if (err) { return reply(err) } // FIXME: how to test?
+      reply.view('moduleModal', payload)
+    }
+    Wreck.read(res, { json: true }, go)
+  }
+
   const mapperKnown = (request, callback) => {
     const dest = dbUrl + '/_design/verse/_view/all'
     callback(null, dest, { accept: 'application/json' })
@@ -188,29 +215,24 @@ exports.register = (server, options, next) => {
     server.methods.allJson((err, res) => {
       // console.log('ER-A:', err)
       if (err) { return reply(err) }
+      const sorter = (a, b) => {
+        const at = a.doc.time[a.doc['dist-tags'].latest]
+        const bt = b.doc.time[b.doc['dist-tags'].latest]
+        if (at > bt) { return 1 }
+        if (at < bt) { return -1 }
+        return 0
+      }
+
       if (request.params.keyword) {
-        // console.log('K:', res[0])
         reply(
           res.filter((m) => (m.doc.keywords && m.doc.keywords.indexOf(request.params.keyword) !== -1) ||
               m.doc.versions[m.doc['dist-tags'].latest].keywords.indexOf(request.params.keyword) !== -1
           )
-          .sort((a, b) => {
-            const at = a.doc.time.modified
-            const bt = b.doc.time.modified
-            if (at > bt) { return 1 }
-            if (at < bt) { return -1 }
-            return 0
-          })
+          .sort(sorter)
           .reverse()
         )
       } else {
-        reply(res.sort((a, b) => {
-          const at = a.doc.time.modified
-          const bt = b.doc.time.modified
-          if (at > bt) { return 1 }
-          if (at < bt) { return -1 }
-          return 0
-        }).reverse())
+        reply(res.sort(sorter).reverse())
       }
     })
   }
@@ -294,6 +316,28 @@ exports.register = (server, options, next) => {
       proxy: {
         mapUri: mapperKnown,
         onResponse: responderKnown
+      }
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/module/{module}',
+    handler: {
+      proxy: {
+        mapUri: mapperModule,
+        onResponse: responderModule
+      }
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/moduleModal/{module}',
+    handler: {
+      proxy: {
+        mapUri: mapperModule,
+        onResponse: responderModuleModal
       }
     }
   })

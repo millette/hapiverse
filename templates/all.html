@@ -18,8 +18,8 @@
 %>
   <div class="column">
     <div class="callout" data-equalizer-watch>
-      <h4><%- module.name %> <small><%- moduleFull.doc['dist-tags'].latest %></small></h4>
-      <p><%- new Date(moduleFull.doc.time.modified).toLocaleString() %></p>
+      <h4 data-module="<%- module.name %>"><%- module.name %> <small><%- moduleFull.doc['dist-tags'].latest %></small></h4>
+      <p><%- new Date(moduleFull.doc.time[moduleFull.doc['dist-tags'].latest]).toLocaleString() %></p>
       <p><%- module.description %></p>
       <% if (module.keywords && module.keywords.length) { %>
       <p class="small button-group">
@@ -34,4 +34,5 @@
 </div>
 <%= partials.pager(data) %>
 </div>
+<div class="reveal" data-reveal data-close-on-click="true" data-close-on-esc="true" data-animation-in="slide-in-down" data-animation-out="slide-out-down" id="module-modal"></div>
 <%= partials.foot(data) %>

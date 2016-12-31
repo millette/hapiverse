@@ -1,0 +1,58 @@
+<h3><%- data.name %> <small><a href="/module/<%- data.name %>">permalink</a></small></h3>
+<p><%- data.description %></p>
+<dl>
+<dt>Releases</dt>
+<dd><%- Object.keys(data.versions).length %></dd>
+
+<dt>Last release</dt>
+<dd><%- data['dist-tags'].latest %></dd>
+<dd><%- data.time[data['dist-tags'].latest] %></dd>
+
+<% if (data.versions[data['dist-tags'].latest].homepage) { %>
+<dt>Homepage</dt>
+<dd><a href="<%- data.versions[data['dist-tags'].latest].homepage %>"><%- data.versions[data['dist-tags'].latest].homepage %></a></dd>
+<% } %>
+
+<% if (data.versions[data['dist-tags'].latest].license) { %>
+<dt>License</dt>
+<dd><%- data.versions[data['dist-tags'].latest].license %></dd>
+<% } %>
+
+<% if (data.versions[data['dist-tags'].latest].author) { %>
+<dt>Author</dt>
+<% if (data.versions[data['dist-tags'].latest].author.name) { %>
+<dd><%- data.versions[data['dist-tags'].latest].author.name %></dd>
+<dd><%- data.versions[data['dist-tags'].latest].author.email %></dd>
+<% } else { %>
+<dd><%- data.versions[data['dist-tags'].latest].author %></dd>
+<% } %>
+<% } %>
+
+<% if (data.versions[data['dist-tags'].latest].authors) { %>
+<dt>Authors</dt>
+<% data.versions[data['dist-tags'].latest].authors.forEach(function (m) { %>
+<% if (m.name) { %>
+<dd><%- m.name %></dd>
+<dd><%- m.email %></dd>
+<% } else { %>
+<dd><%- m %></dd>
+<% } %>
+<% }) %>
+<% } %>
+
+<% if (data.versions[data['dist-tags'].latest].maintainers) { %>
+<dt>Maintainers</dt>
+<% data.versions[data['dist-tags'].latest].maintainers.forEach(function (m) { %>
+<% if (m.name) { %>
+<dd><%- m.name %></dd>
+<dd><%- m.email %></dd>
+<% } else { %>
+<dd><%- m %></dd>
+<% } %>
+<% }) %>
+<% } %>
+
+</dl>
+<!-- pre>
+<%- JSON.stringify(data, null, '  ') %>
+</pre -->

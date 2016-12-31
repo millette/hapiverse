@@ -10,7 +10,7 @@
       <p><%- module.description %></p>
       <p>
       <% module.tags.forEach((tag) => { %>
-        <span class="label <%- tag.labelClass %>"><%- tag.keyword %></span>
+        <a class="button <%- tag.labelClass %>" href="/fresh/<%- tag.keyword %>"><%- tag.keyword %></a>
       <% }) %>
       </p>
     </div>
