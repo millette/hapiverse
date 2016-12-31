@@ -8,6 +8,9 @@ const qs = require('querystring')
 const Wreck = require('wreck')
 const _ = require('lodash')
 const got = require('got')
+const ColorHash = require('color-hash')
+
+const ch = new ColorHash()
 
 // self
 const utils = require('./utils')
@@ -362,7 +365,7 @@ exports.register = (server, options, next) => {
       handler: function (request, reply) {
         const page = request.query && request.query.page || 1
         const start = (page - 1) * utils.perPage
-        const o = { nModules: request.pre.info.length, keyword: request.params.keyword, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
+        const o = { ch: ch, nModules: request.pre.info.length, keyword: request.params.keyword, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
         reply.view('all', o)
       }
     }
@@ -379,7 +382,7 @@ exports.register = (server, options, next) => {
       handler: function (request, reply) {
         const page = request.query && request.query.page || 1
         const start = (page - 1) * utils.perPage
-        const o = { nModules: request.pre.info.length, keyword: request.params.keyword, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
+        const o = { ch: ch, nModules: request.pre.info.length, keyword: request.params.keyword, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
         reply.view('all', o)
       }
     }

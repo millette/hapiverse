@@ -24,7 +24,13 @@
       <% if (module.keywords && module.keywords.length) { %>
       <p class="small button-group">
       <% module.keywords.forEach((tag) => { %>
-        <a class="button" href="/<%- data.pathparts[0] %>/<%- tag %>"><%- tag %></a>
+        <a
+        <% if (data.ch) { %>
+          style="background: <%- data.ch.hex(tag) %>"
+        <% } %>
+        class="button" href="/<%- data.pathparts[0] %>/<%- tag %>">
+          <%- tag %>
+        </a>
       <% }) %>
       </p>
       <% } %>
