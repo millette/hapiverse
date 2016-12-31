@@ -7,8 +7,15 @@
   <% if (false && keyword.value < 2) { return } %>
   <div class="column">
     <a href="/fresh/<%- keyword.key[0] %>">
-      <div class="callout" data-equalizer-watch>
-        <h4><%- keyword.key[0] %> <small><%- keyword.value %></small></h4>
+      <div class="callout" data-equalizer-watch
+      <% if (data.ch) { %>
+        style="color: white; background: <%- data.ch.hex(keyword.key[0]) %>"
+      <% } %>
+      >
+        <h4>
+          <%- keyword.key[0] %>
+          <small><%- keyword.value %></small>
+        </h4>
       </div>
     </a>
   </div>
