@@ -30,6 +30,7 @@
   ],
   "dependencies": {
     "catbox-redis": "^2.0.2",
+    "color-hash": "^1.0.3",
     "confidence": "^3.0.2",
     "couchdb-push": "^2.3.2",
     "dotenv-safe": "^3.0.0",
