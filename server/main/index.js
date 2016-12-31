@@ -161,7 +161,15 @@ exports.register = (server, options, next) => {
     if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
     const go = (err, payload) => {
       if (err) { return reply(err) } // FIXME: how to test?
-      reply(payload.rows)
+      reply(payload.rows
+      .filter((r) => r.key[0] > 2012)
+      .map((r) => {
+        return {
+          year: r.key[0],
+          month: r.key[1],
+          releases: r.value
+        }
+      }))
     }
     Wreck.read(res, { json: true }, go)
   }
@@ -360,6 +368,14 @@ exports.register = (server, options, next) => {
         mapUri: mapperReleases,
         onResponse: responderReleases
       }
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/releases',
+    handler: {
+      view: 'releases'
     }
   })
 
