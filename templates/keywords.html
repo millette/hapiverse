@@ -6,9 +6,11 @@
 <% data.keywords.forEach((keyword) => { %>
   <% if (false && keyword.value < 2) { return } %>
   <div class="column">
-    <div class="callout" data-equalizer-watch>
-      <h4><%- keyword.key[0] %> <small><%- keyword.value %></small></h4>
-    </div>
+    <a href="/all/<%- keyword.key[0] %>">
+      <div class="callout" data-equalizer-watch>
+        <h4><%- keyword.key[0] %> <small><%- keyword.value %></small></h4>
+      </div>
+    </a>
   </div>
 <% }) %>
 </div>

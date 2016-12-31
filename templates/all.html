@@ -1,6 +1,15 @@
 <%= partials.head(data) %>
 <div class="row column">
-  <h2>Locally known modules</h2>
+  <h2>
+    <%- data.nModules %> locally known modules
+    <% if (data.keyword) { %>
+      <small>
+        <%- data.keyword %>
+        (<a href="/all">any keyword</a> |
+        <a href="/keywords">keywords</a>)
+      </small>
+    <% } %>
+  </h2>
 <%= partials.pager(data) %>
 <div class="row small-up-2 medium-up-3 large-up-4" data-equalizer data-equalize-by-row="true">
 <%
@@ -12,9 +21,9 @@
       <h4><%- module.name %> <small><%- moduleFull.doc['dist-tags'].latest %></small></h4>
       <p><%- module.description %></p>
       <% if (module.keywords && module.keywords.length) { %>
-      <p>
+      <p class="small button-group">
       <% module.keywords.forEach((tag) => { %>
-        <span class="label"><%- tag %></span>
+        <a class="button" href="/all/<%- tag %>"><%- tag %></a>
       <% }) %>
       </p>
       <% } %>
