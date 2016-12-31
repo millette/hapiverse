@@ -276,7 +276,6 @@ exports.register = (server, options, next) => {
     }
   })
 
-
   server.route({
     method: 'GET',
     path: '/all/{keyword}',
