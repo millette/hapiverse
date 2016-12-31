@@ -148,6 +148,24 @@ exports.register = (server, options, next) => {
     Wreck.read(res, { json: true }, go)
   }
 
+  const mapperReleases = (request, callback) => {
+    const dest = dbUrl + '/_design/verse/_view/releases?' + qs.stringify({
+      group_level: 2
+    })
+    callback(null, dest, { accept: 'application/json' })
+  }
+
+  const responderReleases = (err, res, request, reply) => {
+    // console.log('ER3:', err)
+    if (err) { return reply(err) } // FIXME: how to test?
+    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+    const go = (err, payload) => {
+      if (err) { return reply(err) } // FIXME: how to test?
+      reply(payload.rows)
+    }
+    Wreck.read(res, { json: true }, go)
+  }
+
   const mapperModule = (request, callback) => {
     const dest = dbUrl + '/' + request.params.module
     callback(null, dest, { accept: 'application/json' })
@@ -330,6 +348,17 @@ exports.register = (server, options, next) => {
       proxy: {
         mapUri: mapperModule,
         onResponse: responderModule
+      }
+    }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/releases.json',
+    handler: {
+      proxy: {
+        mapUri: mapperReleases,
+        onResponse: responderReleases
       }
     }
   })
