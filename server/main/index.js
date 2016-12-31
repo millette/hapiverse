@@ -184,6 +184,37 @@ exports.register = (server, options, next) => {
     })
   }
 
+  const fresh = function (request, reply) {
+    server.methods.allJson((err, res) => {
+      // console.log('ER-A:', err)
+      if (err) { return reply(err) }
+      if (request.params.keyword) {
+        // console.log('K:', res[0])
+        reply(
+          res.filter((m) => (m.doc.keywords && m.doc.keywords.indexOf(request.params.keyword) !== -1) ||
+              m.doc.versions[m.doc['dist-tags'].latest].keywords.indexOf(request.params.keyword) !== -1
+          )
+          .sort((a, b) => {
+            const at = a.doc.time.modified
+            const bt = b.doc.time.modified
+            if (at > bt) { return 1 }
+            if (at < bt) { return -1 }
+            return 0
+          })
+          .reverse()
+        )
+      } else {
+        reply(res.sort((a, b) => {
+          const at = a.doc.time.modified
+          const bt = b.doc.time.modified
+          if (at > bt) { return 1 }
+          if (at < bt) { return -1 }
+          return 0
+        }).reverse())
+      }
+    })
+  }
+
   const localKeywords = function (request, reply) {
     server.methods.localKeywords((err, res) => {
       // console.log('ER-A:', err)
@@ -278,7 +309,7 @@ exports.register = (server, options, next) => {
 
   server.route({
     method: 'GET',
-    path: '/all/{keyword}',
+    path: '/all/{keyword?}',
     config: {
       pre: [
         { method: all, assign: 'info' },
@@ -295,16 +326,16 @@ exports.register = (server, options, next) => {
 
   server.route({
     method: 'GET',
-    path: '/all',
+    path: '/fresh/{keyword?}',
     config: {
       pre: [
-        { method: all, assign: 'info' },
+        { method: fresh, assign: 'info' },
         { method: utils.pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
         const page = request.query && request.query.page || 1
         const start = (page - 1) * utils.perPage
-        const o = { nModules: request.pre.info.length, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
+        const o = { nModules: request.pre.info.length, keyword: request.params.keyword, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
         reply.view('all', o)
       }
     }
