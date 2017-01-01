@@ -12,25 +12,25 @@ $(function () {
       actions: false,
       spec: {
         description: 'A simple bar chart with embedded data.',
-        data: { url: "/releases.json" },
-        mark: "bar",
+        data: { url: '/releases.json' },
+        mark: 'bar',
         encoding: {
           column: {
-            field: "month", type: "ordinal",
+            field: 'month', type: 'ordinal',
             scale: { padding: 4 },
-            axis: { orient: "bottom", axisWidth: 1, offset: -8 }
+            axis: { orient: 'bottom', axisWidth: 1, offset: -8 }
           },
           y: {
-            aggregate: "sum", field: "releases", type: "quantitative",
-            axis: { title: "Releases", grid: false }
+            aggregate: 'sum', field: 'releases', type: 'quantitative',
+            axis: { title: 'Releases', grid: false }
           },
           x: {
-            field: "year", type: "nominal",
+            field: 'year', type: 'nominal',
             scale: {bandSize: 10},
             axis: false
           },
           color: {
-            field: "year", type: "nominal"
+            field: 'year', type: 'nominal'
           }
         },
         config: { facet: { cell : { strokeWidth: 0 } } }
