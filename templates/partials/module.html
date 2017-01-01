@@ -1,12 +1,12 @@
 <h3><%- data.name %> <small><a href="/module/<%- data.name %>">permalink</a></small></h3>
 <p><%- data.description %></p>
 <dl>
-<dt>Releases</dt>
-<dd><%- Object.keys(data.versions).length %></dd>
 
-<dt>Last release</dt>
-<dd><%- data['dist-tags'].latest %></dd>
-<dd><%- data.time[data['dist-tags'].latest] %></dd>
+<dt>Latest release</dt>
+<dd><%- data['dist-tags'].latest %> (<%- new Date(data.time[data['dist-tags'].latest]).toLocaleString() %>) of <%- Object.keys(data.versions).length %> releases</dd>
+
+<dt>NPM page</dt>
+<dd><a href="https://www.npmjs.com/package/<%- data.name %>">https://www.npmjs.com/package/<%- data.name %></a></dd>
 
 <% if (data.versions[data['dist-tags'].latest].homepage) { %>
 <dt>Homepage</dt>
@@ -51,8 +51,33 @@
 <% } %>
 <% }) %>
 <% } %>
-</dl>
 
-<!--
-<%= JSON.stringify(data, null, '  ') %>
--->
+<% if (data.versions[data['dist-tags'].latest].engines && data.versions[data['dist-tags'].latest].engines.node) { %>
+<dt>Node version</dt>
+<dd><%- data.versions[data['dist-tags'].latest].engines.node %></dd>
+<% } %>
+
+<% if (data.versions[data['dist-tags'].latest].dependencies) { %>
+<dt>Dependencies</dt>
+<dd>
+<% _.forEach(data.versions[data['dist-tags'].latest].dependencies, function (v, k) { %>
+<%- k %>
+<% }) %>
+</dd>
+<% } %>
+
+<% if (data.versions[data['dist-tags'].latest].keywords && data.versions[data['dist-tags'].latest].keywords.length) { %>
+<dt>Keywords</dt>
+<dd class="small button-group">
+<% data.versions[data['dist-tags'].latest].keywords.forEach((tag) => { %>
+  <a
+  <% if (data.ch) { %>
+    style="background: <%- data.ch.hex(tag) %>"
+  <% } %>
+  class="button" href="/fresh/<%- tag %>">
+    <%- tag %>
+  </a>
+<% }) %>
+</dd>
+<% } %>
+</dl>

@@ -185,6 +185,7 @@ exports.register = (server, options, next) => {
     if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
     const go = (err, payload) => {
       if (err) { return reply(err) } // FIXME: how to test?
+      payload.ch = ch
       reply.view('module', payload)
     }
     Wreck.read(res, { json: true }, go)
@@ -196,6 +197,7 @@ exports.register = (server, options, next) => {
     if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
     const go = (err, payload) => {
       if (err) { return reply(err) } // FIXME: how to test?
+      payload.ch = ch
       reply.view('moduleModal', payload)
     }
     Wreck.read(res, { json: true }, go)
