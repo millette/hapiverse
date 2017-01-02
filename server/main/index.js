@@ -41,8 +41,6 @@ const hapiKeywordsResponder = (err, res, request, reply) => {
   const go = (err, payload) => {
     // console.log('ER2:', err)
     if (err) { return reply(err) } // FIXME: how to test?
-    // console.log('PATH:', request.path)
-    // console.log('PL-LEN:', payload.rows.length)
     const rows = payload.rows
       .map((row) => {
         row.keyword = row.key[0]
@@ -192,9 +190,7 @@ exports.register = (server, options, next) => {
   }
 
   const mapperReleases = (request, callback) => {
-    const dest = dbUrl + '/_design/verse/_view/releases?' + qs.stringify({
-      group_level: 2
-    })
+    const dest = dbUrl + '/_design/verse/_view/releases?group_level=2'
     callback(null, dest, { accept: 'application/json' })
   }
 
@@ -272,9 +268,6 @@ exports.register = (server, options, next) => {
     server.methods.localDeps((err, res) => {
       // console.log('ER-A:', err)
       if (err) { return reply(err) }
-      // console.log(typeof res)
-      // console.log(Object.keys(res).slice(0, 5))
-      // reply.view('deps', { rows: res })
       reply(res)
     })
   }
@@ -293,7 +286,6 @@ exports.register = (server, options, next) => {
       if (request.params.keyword) {
         // console.log('K:', res[0])
         reply(res.filter((m) => {
-          // return true
           return (m.doc.keywords && m.doc.keywords.indexOf(request.params.keyword) !== -1) ||
             m.doc.versions[m.doc['dist-tags'].latest].keywords.indexOf(request.params.keyword) !== -1
         }))
@@ -348,8 +340,6 @@ exports.register = (server, options, next) => {
     'localDeps',
     mapperlocalDeps,
     responderlocalDeps
-    // mapperlocalKeywords,
-    // responderlocalKeywords
   )
 
   utils.proxyMethod(
@@ -451,14 +441,6 @@ exports.register = (server, options, next) => {
     }
   })
 
-/*
-  server.route({
-    method: 'GET',
-    path: '/deps',
-    handler: deps
-  })
-*/
-
   server.route({
     method: 'GET',
     path: '/deps',
@@ -488,42 +470,10 @@ exports.register = (server, options, next) => {
         const page = request.query && request.query.page || 1
         const start = (page - 1) * utils.perPage
         const o = { ch: ch, nModules: request.pre.info.length, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
-        // reply.view('deps', o)
         reply.view('byDep', o)
-        // reply(o)
-      }
-    }
-
-/*
-    handler: {
-      proxy: {
-        mapUri: mapperlocalByDeps,
-        onResponse: responderlocalByDeps
-      }
-    }
-*/
-  })
-
-
-/*
-  server.route({
-    method: 'GET',
-    path: '/deps/{dep}',
-    config: {
-      pre: [
-        { method: deps, assign: 'info' },
-        { method: utils.pager, assign: 'pager' }
-      ],
-      handler: function (request, reply) {
-        const page = request.query && request.query.page || 1
-        const start = (page - 1) * utils.perPage
-        const o = { nDeps: request.pre.info.length, pager: request.pre.pager, deps: request.pre.info.slice(start, start + utils.perPage) }
-        // reply.view('deps', o)
-        reply(o)
       }
     }
   })
-*/
 
   server.route({
     method: 'GET',
