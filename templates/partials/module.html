@@ -59,11 +59,11 @@
 
 <% if (data.versions[data['dist-tags'].latest].dependencies) { %>
 <dt>Dependencies</dt>
-<dd>
 <% _.forEach(data.versions[data['dist-tags'].latest].dependencies, function (v, k) { %>
-<%- k %>
-<% }) %>
+<dd>
+<a href="/deps/<%- k %>"><%- k %></a>
 </dd>
+<% }) %>
 <% } %>
 
 <% if (data.versions[data['dist-tags'].latest].keywords && data.versions[data['dist-tags'].latest].keywords.length) { %>

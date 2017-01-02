@@ -115,7 +115,27 @@ exports.register = (server, options, next) => {
       })
   }
 
-// http://localhost:5993/hapiverse/_design/verse/_view/deps?reduce=false&startkey="joi"&endkey="joi\ufff0"
+  const mapperlocalByDeps = (request, callback) => {
+    const dest = dbUrl + '/_design/verse/_view/deps?' + qs.stringify({
+      reduce: false,
+      include_docs: true,
+      startkey: '"' + request.params.dep + '"',
+      endkey: '"' + request.params.dep + '\ufff0"'
+    })
+    // console.log('DEST:', dest)
+    callback(null, dest, { accept: 'application/json' })
+  }
+
+  const responderlocalByDeps = (err, res, request, reply) => {
+    // console.log('ER3:', err)
+    if (err) { return reply(err) } // FIXME: how to test?
+    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+    const go = (err, payload) => {
+      if (err) { return reply(err) } // FIXME: how to test?
+      reply(payload.rows)
+    }
+    Wreck.read(res, { json: true }, go)
+  }
 
   const mapperlocalDeps = (request, callback) => {
     const dest = dbUrl + '/_design/verse/_view/deps?group_level=1'
@@ -256,6 +276,13 @@ exports.register = (server, options, next) => {
       // console.log(Object.keys(res).slice(0, 5))
       // reply.view('deps', { rows: res })
       reply(res)
+    })
+  }
+
+  const byDeps = function (request, reply) {
+    reply.proxy({
+      mapUri: mapperlocalByDeps,
+      onResponse: responderlocalByDeps
     })
   }
 
@@ -449,7 +476,54 @@ exports.register = (server, options, next) => {
     }
   })
 
+  server.route({
+    method: 'GET',
+    path: '/deps/{dep}',
+    config: {
+      pre: [
+        { method: byDeps, assign: 'info' },
+        { method: utils.pager, assign: 'pager' }
+      ],
+      handler: function (request, reply) {
+        const page = request.query && request.query.page || 1
+        const start = (page - 1) * utils.perPage
+        const o = { ch: ch, nModules: request.pre.info.length, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
+        // reply.view('deps', o)
+        reply.view('byDep', o)
+        // reply(o)
+      }
+    }
 
+/*
+    handler: {
+      proxy: {
+        mapUri: mapperlocalByDeps,
+        onResponse: responderlocalByDeps
+      }
+    }
+*/
+  })
+
+
+/*
+  server.route({
+    method: 'GET',
+    path: '/deps/{dep}',
+    config: {
+      pre: [
+        { method: deps, assign: 'info' },
+        { method: utils.pager, assign: 'pager' }
+      ],
+      handler: function (request, reply) {
+        const page = request.query && request.query.page || 1
+        const start = (page - 1) * utils.perPage
+        const o = { nDeps: request.pre.info.length, pager: request.pre.pager, deps: request.pre.info.slice(start, start + utils.perPage) }
+        // reply.view('deps', o)
+        reply(o)
+      }
+    }
+  })
+*/
 
   server.route({
     method: 'GET',
