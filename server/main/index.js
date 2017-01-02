@@ -115,6 +115,27 @@ exports.register = (server, options, next) => {
       })
   }
 
+  const mapperlocalDeps = (request, callback) => {
+    const dest = dbUrl + '/_design/verse/_view/deps?group_level=1'
+    // console.log('DEST:', dest)
+    callback(null, dest, { accept: 'application/json' })
+  }
+
+  const responderlocalDeps = (err, res, request, reply) => {
+    // console.log('ER3:', err)
+    if (err) { return reply(err) } // FIXME: how to test?
+    if (res.statusCode >= 400) { return reply.boom(res.statusCode, new Error(res.statusMessage)) }
+    const go = (err, payload) => {
+      if (err) { return reply(err) } // FIXME: how to test?
+      reply(payload.rows.sort((a, b) => {
+        if (a.value > b.value) { return 1 }
+        if (a.value < b.value) { return -1 }
+        return 0
+      }).reverse())
+    }
+    Wreck.read(res, { json: true }, go)
+  }
+
   const mapperlocalKeywords = (request, callback) => {
     const dest = dbUrl + '/_design/app/_view/byKeyword?group_level=1'
     // console.log('DEST:', dest)
@@ -225,6 +246,18 @@ exports.register = (server, options, next) => {
       .catch((e) => reply(e))
   }
 
+  const deps = function (request, reply) {
+    server.methods.localDeps((err, res) => {
+      // console.log('ER-A:', err)
+      if (err) { return reply(err) }
+      reply(res.sort((a, b) => {
+        if (a.value > b.value) { return 1 }
+        if (a.value < b.value) { return -1 }
+        return 0
+      }).reverse())
+    })
+  }
+
   const all = function (request, reply) {
     server.methods.allJson((err, res) => {
       // console.log('ER-A:', err)
@@ -281,6 +314,15 @@ exports.register = (server, options, next) => {
       )
     })
   }
+
+  utils.proxyMethod(
+    server,
+    'localDeps',
+    mapperlocalDeps,
+    responderlocalDeps
+    // mapperlocalKeywords,
+    // responderlocalKeywords
+  )
 
   utils.proxyMethod(
     server,
@@ -379,6 +421,12 @@ exports.register = (server, options, next) => {
     handler: {
       view: 'releases'
     }
+  })
+
+  server.route({
+    method: 'GET',
+    path: '/deps',
+    handler: deps
   })
 
   server.route({
