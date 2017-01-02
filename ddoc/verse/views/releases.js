@@ -3,7 +3,7 @@
 'use strict'
 
 module.exports = {
-  map: function(doc) {
+  map: function (doc) {
     var r
     for (r in doc.time) {
       if (r !== 'created' && r !== 'modified') {
