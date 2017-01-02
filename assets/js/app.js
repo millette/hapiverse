@@ -6,7 +6,7 @@ $(function () {
   var $vis = $('#vis')
 
   var renderGraph = function () {
-    vg.embed($vis[0], {
+    window.vg.embed($vis[0], {
       mode: 'vega-lite',
       // renderer: 'svg', // canvas by default
       actions: false,
@@ -16,24 +16,26 @@ $(function () {
         mark: 'bar',
         encoding: {
           column: {
-            field: 'month', type: 'ordinal',
+            field: 'month',
+            type: 'ordinal',
             scale: { padding: 4 },
             axis: { orient: 'bottom', axisWidth: 1, offset: -8 }
           },
           y: {
-            aggregate: 'sum', field: 'releases', type: 'quantitative',
+            aggregate: 'sum',
+            field: 'releases',
+            type: 'quantitative',
             axis: { title: 'Releases', grid: false }
           },
           x: {
-            field: 'year', type: 'nominal',
+            field: 'year',
+            type: 'nominal',
             scale: {bandSize: 10},
             axis: false
           },
-          color: {
-            field: 'year', type: 'nominal'
-          }
+          color: { field: 'year', type: 'nominal' }
         },
-        config: { facet: { cell : { strokeWidth: 0 } } }
+        config: { facet: { cell: { strokeWidth: 0 } } }
       }
     })
   }
@@ -44,9 +46,9 @@ $(function () {
   if ($mm.length) {
     $('h4').click(function (ev) {
       $.ajax('/moduleModal/' + $(this).data('module'))
-        .done(function(resp){
+        .done(function (resp) {
           $mm.html(resp).foundation('open')
-      })
+        })
     })
   }
 })
