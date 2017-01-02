@@ -115,6 +115,8 @@ exports.register = (server, options, next) => {
       })
   }
 
+// http://localhost:5993/hapiverse/_design/verse/_view/deps?reduce=false&startkey="joi"&endkey="joi\ufff0"
+
   const mapperlocalDeps = (request, callback) => {
     const dest = dbUrl + '/_design/verse/_view/deps?group_level=1'
     // console.log('DEST:', dest)
@@ -250,11 +252,10 @@ exports.register = (server, options, next) => {
     server.methods.localDeps((err, res) => {
       // console.log('ER-A:', err)
       if (err) { return reply(err) }
-      reply(res.sort((a, b) => {
-        if (a.value > b.value) { return 1 }
-        if (a.value < b.value) { return -1 }
-        return 0
-      }).reverse())
+      // console.log(typeof res)
+      // console.log(Object.keys(res).slice(0, 5))
+      // reply.view('deps', { rows: res })
+      reply(res)
     })
   }
 
@@ -290,7 +291,7 @@ exports.register = (server, options, next) => {
       if (request.params.keyword) {
         reply(
           res.filter((m) => (m.doc.keywords && m.doc.keywords.indexOf(request.params.keyword) !== -1) ||
-              m.doc.versions[m.doc['dist-tags'].latest].keywords.indexOf(request.params.keyword) !== -1
+            m.doc.versions[m.doc['dist-tags'].latest].keywords.indexOf(request.params.keyword) !== -1
           )
           .sort(sorter)
           .reverse()
@@ -423,11 +424,32 @@ exports.register = (server, options, next) => {
     }
   })
 
+/*
   server.route({
     method: 'GET',
     path: '/deps',
     handler: deps
   })
+*/
+
+  server.route({
+    method: 'GET',
+    path: '/deps',
+    config: {
+      pre: [
+        { method: deps, assign: 'info' },
+        { method: utils.pager, assign: 'pager' }
+      ],
+      handler: function (request, reply) {
+        const page = request.query && request.query.page || 1
+        const start = (page - 1) * utils.perPage
+        const o = { nDeps: request.pre.info.length, pager: request.pre.pager, deps: request.pre.info.slice(start, start + utils.perPage) }
+        reply.view('deps', o)
+      }
+    }
+  })
+
+
 
   server.route({
     method: 'GET',

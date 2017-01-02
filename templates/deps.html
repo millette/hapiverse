@@ -1,0 +1,21 @@
+<%= partials.head(data) %>
+<div class="row column">
+  <h2>Popular dependencies <small><%- data.nDeps %></small></h2>
+<%= partials.pager(data) %>
+<div class="row small-up-2 medium-up-3 large-up-4" data-equalizer data-equalize-by-row="true">
+<% data.deps.forEach((dep) => { %>
+  <div class="column">
+    <a href="/d/<%- dep.key %>">
+      <div class="callout" data-equalizer-watch>
+        <h4>
+          <%- dep.key %>
+          <small><%- dep.value %></small>
+        </h4>
+      </div>
+    </a>
+  </div>
+<% }) %>
+</div>
+<%= partials.pager(data) %>
+</div>
+<%= partials.foot(data) %>
