@@ -1,5 +1,15 @@
 <%= partials.head(data) %>
-<div class="front row small-up-2 medium-up-3 large-up-5">
-<h1>Hello</h1>
+<div class="row column">
+<ul class="menu expanded">
+  <li><a href="/fresh">By date (freshest first)</a></li>
+  <li><a href="/keywords">Keywords</a></li>
+  <li><a href="/deps">Dependencies</a></li>
+  <li><a href="/all">Modules alphabetically</a></li>
+</ul>
+
+<div class="row column">
+<h2>Releases</h2>
+<%= partials.releases(data) %>
+</div>
 </div>
 <%= partials.foot(data) %>

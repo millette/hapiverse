@@ -47,6 +47,6 @@
             </ul>
           </nav>
         <% } else { %>
-          <h1 class="text-center"><%- data && data.app && data.app.siteTitle %></h1>
+          <h1><a href="/"><%- data && data.app && data.app.siteTitle || 'noname' %></a></h1>
         <% } %>
 
