@@ -4,11 +4,16 @@ const Confidence = require('confidence')
 const Config = require('./config')
 const criteria = { env: process.env.NODE_ENV }
 
+const url = require('url')
+
 const manifest = {
   $meta: 'This file defines GlassJaw.',
   server: {
     app: { siteTitle: Config.get('/app/siteTitle') },
-    cache: 'catbox-redis',
+    cache: {
+      engine: 'catbox-redis',
+      host: url.parse(process.env.REDIS_PORT || 'http://localhost:6379').hostname
+    },
     debug: { log: ['error'] },
     connections: { routes: { security: true } }
   },

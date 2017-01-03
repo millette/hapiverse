@@ -7,18 +7,24 @@ const criteria = { env: process.env.NODE_ENV }
 
 const pkg = require('./package.json')
 
+const url = require('url')
+
 const defFalse = {
   $filter: 'env',
   prod: true,
   $default: false
 }
 
+const couchdbUrl = url.parse(process.env.COUCHDB_PORT || process.env.DBURL || 'http://localhost:5984')
+couchdbUrl.protocol = 'http'
+couchdbUrl.pathname = '/'
+
 const config = {
   $meta: 'This file configures Hapiverse.',
   projectName: pkg.name,
   app: { siteTitle: process.env.SITETITLE },
   db: {
-    url: process.env.DBURL,
+    url: url.format(couchdbUrl), // process.env.DBURL,
     name: process.env.DBNAME,
     admin: process.env.DBADMIN,
     password: process.env.DBPASSWORD
