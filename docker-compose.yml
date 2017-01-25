@@ -12,6 +12,7 @@ services:
 
   web:
     build: .
+
     depends_on:
       - couchdb
       - redis
@@ -24,3 +25,5 @@ services:
 
     ports:
       - "8200:8200"
+
+    restart: always
