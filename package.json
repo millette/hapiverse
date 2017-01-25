@@ -20,13 +20,12 @@
     "test": "standard && nyc ava",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
-  "files": [
-    "index.js",
-    "cli.js"
-  ],
   "keywords": [
-    "cli-app",
-    "cli"
+    "hapi",
+    "hapijs",
+    "plugins",
+    "modules",
+    "directory"
   ],
   "dependencies": {
     "catbox-redis": "^2.0.2",
@@ -38,14 +37,14 @@
     "got": "^6.7.1",
     "h2o2": "^5.4.0",
     "hapi": "^16.1.0",
-    "hapi-context-app": "^0.2.1",
+    "hapi-context-app": "^0.3.0",
     "hapi-context-credentials": "^2.0.0",
-    "hapi-couchdb-login": "^0.2.1",
-    "hapi-error": "^1.6.0",
+    "hapi-couchdb-login": "^0.3.0",
+    "hapi-error": "^1.7.0",
     "hapi-favicon": "^1.0.0",
     "hapijs-status-monitor": "^0.5.0",
     "inert": "^4.1.0",
-    "lodash-vision": "^0.1.0",
+    "lodash-vision": "^0.2.0",
     "meow": "^3.7.0",
     "update-notifier": "^1.0.3",
     "vision": "^4.1.1"
@@ -55,7 +54,7 @@
     "babel-eslint": "^7.1.1",
     "coveralls": "^2.11.15",
     "nodemon": "^1.11.0",
-    "nyc": "^10.0.0",
+    "nyc": "^10.1.2",
     "standard": "^8.6.0"
   },
   "standard": {
