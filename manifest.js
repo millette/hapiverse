@@ -11,7 +11,8 @@ const manifest = {
   server: {
     app: { siteTitle: Config.get('/app/siteTitle') },
     cache: {
-      engine: 'catbox-redis',
+      engine: 'catbox-memory',
+      // engine: 'catbox-redis',
       host: url.parse(process.env.REDIS_PORT || 'http://localhost:6379').hostname
     },
     debug: { log: ['error'] },
