@@ -16,8 +16,9 @@
   "scripts": {
     "start": "NODE_ENV=prod && node server.js",
     "dev": "nodemon server.js",
+    "now": "./now-deploy-env.sh",
     "lint": "standard",
-    "test": "standard && nyc ava",
+    "test": "standard",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
@@ -28,7 +29,7 @@
     "directory"
   ],
   "dependencies": {
-    "catbox-redis": "^2.0.2",
+    "catbox-memory": "^2.0.4",
     "color-hash": "^1.0.3",
     "confidence": "^3.0.2",
     "couchdb-push": "^2.3.2",
@@ -50,11 +51,9 @@
     "vision": "^4.1.1"
   },
   "devDependencies": {
-    "ava": "^0.17.0",
     "babel-eslint": "^7.1.1",
     "coveralls": "^2.11.15",
     "nodemon": "^1.11.0",
-    "nyc": "^10.1.2",
     "standard": "^8.6.0"
   },
   "standard": {
