@@ -44,8 +44,6 @@
     "hapi-favicon": "^1.0.0",
     "inert": "^4.1.0",
     "lodash-vision": "^0.2.0",
-    "meow": "^3.7.0",
-    "update-notifier": "^1.0.3",
     "vision": "^4.1.1"
   },
   "devDependencies": {
