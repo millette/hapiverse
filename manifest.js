@@ -25,37 +25,15 @@ const manifest = {
   registrations: [
     {
       plugin: {
-        options: {
-          db: { url: Config.get('/db/url') },
-          cookie: {
-            password: Config.get('/cookie/password'),
-            secure: Config.get('/cookie/secure')
-          }
-        },
-        register: 'hapi-couchdb-login'
-      },
-      options: { routes: { prefix: '/user' } }
-    },
-    {
-      plugin: {
         register: 'hapi-favicon',
         options: { path: 'assets/img/favicon.ico' }
       }
     },
     { plugin: 'hapi-context-credentials' },
     { plugin: 'h2o2' },
+    { plugin: 'hapi-boom-decorators' },
     { plugin: 'inert' },
     { plugin: 'vision' },
-    {
-      plugin: {
-        register: 'hapijs-status-monitor',
-        options: {
-          title: 'Status monitor',
-          path: '/status',
-          routeConfig: { auth: { mode: 'required' } }
-        }
-      }
-    },
     { plugin: './server/static/index' },
     {
       plugin: {
