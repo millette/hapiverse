@@ -11,7 +11,7 @@ const url = require('url')
 
 const defFalse = {
   $filter: 'env',
-  prod: true,
+  production: true,
   $default: false
 }
 
