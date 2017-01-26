@@ -9,15 +9,15 @@
     "email": "robin@millette.info",
     "url": "http://robin.millette.info"
   },
-  "bin": "cli.js",
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "scripts": {
-    "start": "NODE_ENV=prod && node server.js",
+    "start": "NODE_ENV=production && node server.js",
     "dev": "nodemon server.js",
+    "now": "./now-deploy-env.sh",
     "lint": "standard",
-    "test": "standard && nyc ava",
+    "test": "standard",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
@@ -28,7 +28,7 @@
     "directory"
   ],
   "dependencies": {
-    "catbox-redis": "^2.0.2",
+    "catbox-memory": "^2.0.4",
     "color-hash": "^1.0.3",
     "confidence": "^3.0.2",
     "couchdb-push": "^2.3.2",
@@ -37,24 +37,19 @@
     "got": "^6.7.1",
     "h2o2": "^5.4.0",
     "hapi": "^16.1.0",
+    "hapi-boom-decorators": "^2.2.2",
     "hapi-context-app": "^0.3.0",
     "hapi-context-credentials": "^2.0.0",
-    "hapi-couchdb-login": "^0.3.0",
     "hapi-error": "^1.7.0",
     "hapi-favicon": "^1.0.0",
-    "hapijs-status-monitor": "^0.5.0",
     "inert": "^4.1.0",
     "lodash-vision": "^0.2.0",
-    "meow": "^3.7.0",
-    "update-notifier": "^1.0.3",
     "vision": "^4.1.1"
   },
   "devDependencies": {
-    "ava": "^0.17.0",
     "babel-eslint": "^7.1.1",
     "coveralls": "^2.11.15",
     "nodemon": "^1.11.0",
-    "nyc": "^10.1.2",
     "standard": "^8.6.0"
   },
   "standard": {

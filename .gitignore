@@ -3,5 +3,5 @@ node_modules
 coverage
 npm-debug.log
 .env
-.env-docker
 .env-now
+.env-docker

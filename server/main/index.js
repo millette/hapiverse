@@ -551,6 +551,6 @@ exports.register = (server, options, next) => {
 }
 
 exports.register.attributes = {
-  dependencies: ['h2o2'],
+  dependencies: ['h2o2', 'hapi-boom-decorators'],
   name: 'main'
 }
