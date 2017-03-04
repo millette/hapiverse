@@ -378,7 +378,7 @@ exports.register = (server, options, next) => {
         { method: utils.pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
-        const page = request.query && request.query.page || 1
+        const page = (request.query && request.query.page) || 1
         const start = (page - 1) * utils.perPage
         const o = { ch: ch, nKeywords: request.pre.info.length, pager: request.pre.pager, keywords: request.pre.info.slice(start, start + utils.perPage) }
         reply.view('keywords', o)
@@ -450,7 +450,7 @@ exports.register = (server, options, next) => {
         { method: utils.pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
-        const page = request.query && request.query.page || 1
+        const page = (request.query && request.query.page) || 1
         const start = (page - 1) * utils.perPage
         const o = { nDeps: request.pre.info.length, pager: request.pre.pager, deps: request.pre.info.slice(start, start + utils.perPage) }
         reply.view('deps', o)
@@ -467,7 +467,7 @@ exports.register = (server, options, next) => {
         { method: utils.pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
-        const page = request.query && request.query.page || 1
+        const page = (request.query && request.query.page) || 1
         const start = (page - 1) * utils.perPage
         const o = { ch: ch, nModules: request.pre.info.length, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
         reply.view('byDep', o)
@@ -504,7 +504,7 @@ exports.register = (server, options, next) => {
         { method: utils.pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
-        const page = request.query && request.query.page || 1
+        const page = (request.query && request.query.page) || 1
         const start = (page - 1) * utils.perPage
         const o = { ch: ch, nModules: request.pre.info.length, keyword: request.params.keyword, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
         reply.view('all', o)
@@ -521,7 +521,7 @@ exports.register = (server, options, next) => {
         { method: utils.pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
-        const page = request.query && request.query.page || 1
+        const page = (request.query && request.query.page) || 1
         const start = (page - 1) * utils.perPage
         const o = { ch: ch, nModules: request.pre.info.length, keyword: request.params.keyword, pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) }
         reply.view('all', o)
@@ -538,7 +538,7 @@ exports.register = (server, options, next) => {
         { method: utils.pager, assign: 'pager' }
       ],
       handler: function (request, reply) {
-        const page = request.query && request.query.page || 1
+        const page = (request.query && request.query.page) || 1
         const start = (page - 1) * utils.perPage
         reply.view('yeah', { pager: request.pre.pager, modules: request.pre.info.slice(start, start + utils.perPage) })
       }

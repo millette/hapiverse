@@ -3,7 +3,7 @@
 const perPage = 24
 
 const pager = function (request, reply) {
-  const page = parseInt(request.query && request.query.page || 1, 10)
+  const page = parseInt((request.query && request.query.page) || 1, 10)
   const nPages = Math.ceil(request.pre.info.length / perPage)
   const show = 3
 
