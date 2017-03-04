@@ -1,6 +1,6 @@
 {
   "name": "hapiverse",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Modules from the HapiJS Universe.",
   "license": "AGPL-3.0",
   "repository": "millette/hapiverse",
@@ -44,9 +44,12 @@
     "hapi-favicon": "^1.0.0",
     "inert": "^4.1.0",
     "lodash-vision": "^0.2.0",
+    "meow": "^3.7.0",
+    "update-notifier": "^2.1.0",
     "vision": "^4.1.1"
   },
   "devDependencies": {
+    "ava": "^0.18.2",
     "babel-eslint": "^7.1.1",
     "coveralls": "^2.11.16",
     "nodemon": "^1.11.0",
