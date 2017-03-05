@@ -1,0 +1,29 @@
+version: '2'
+services:
+  redis:
+    image: redis:3.2.5-alpine
+
+  couchdb:
+    image: couchdb:1.6.1
+
+    environment:
+      - COUCHDB_USER
+      - COUCHDB_PASSWORD
+
+  web:
+    build: .
+
+    depends_on:
+      - couchdb
+      - redis
+
+    environment:
+      - COUCHDB_PORT=tcp://couchdb:5984
+      - REDIS_PORT=tcp://redis:6379
+      - COUCHDB_USER
+      - COUCHDB_PASSWORD
+
+    ports:
+      - "8200:8200"
+
+    restart: always
