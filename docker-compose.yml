@@ -1,7 +1,9 @@
 version: '2'
 services:
   redis:
-    image: redis:3.2.5-alpine
+    image: redis:3.2.8-alpine
+
+    restart: always
 
   couchdb:
     image: couchdb:1.6.1
@@ -9,6 +11,8 @@ services:
     environment:
       - COUCHDB_USER
       - COUCHDB_PASSWORD
+
+    restart: always
 
   web:
     build: .
@@ -27,3 +31,4 @@ services:
       - "8200:8200"
 
     restart: always
+
