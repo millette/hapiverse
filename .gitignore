@@ -5,3 +5,5 @@ npm-debug.log
 .env
 .env-now
 .env-docker
+keep-env
+
