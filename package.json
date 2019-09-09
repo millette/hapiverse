@@ -31,7 +31,7 @@
     "catbox-memory": "^2.0.4",
     "color-hash": "^1.0.3",
     "confidence": "^3.0.2",
-    "couchdb-push": "^2.3.2",
+    "couchdb-push": "^2.5.0",
     "dotenv-safe": "^4.0.3",
     "glue": "^4.1.0",
     "got": "^6.7.1",
@@ -52,7 +52,7 @@
     "ava": "^0.18.2",
     "babel-eslint": "^7.1.1",
     "coveralls": "^2.12.0",
-    "nodemon": "^1.11.0",
+    "nodemon": "^1.19.2",
     "standard": "^9.0.1"
   },
   "standard": {
